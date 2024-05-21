@@ -7,7 +7,7 @@ json_string=[]
 with open('db.json', 'w', encoding='utf-8') as f:
     p=1
     url=requests.get('https://hypeboost.com/it/categoria/sneakers?'+str(p))
-    for _ in range(135):
+    for _ in range(13):
         soup = BeautifulSoup(url.content, 'html.parser')
         scarpe = soup.find_all("div", {'class':'grid_item'})
         for prod in scarpe:
