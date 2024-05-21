@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Pagina di benvenuto
+{% endblock %}
+{% block content %}
+    {{block.super}}
+    <h1>
+        {% if user.is_authenticated %}
+            Ciao, {{user.username}}
+        {% elif  'nome' in request.resolver_match.kwargs and 'eta' in request.resolver_match.kwargs %}
+            Ciao {{request.resolver_match.kwargs.nome }}, hai {{ request.resolver_match.kwargs.eta }} anni
+        {% else %}
+            Ciao, guest!
+        {% endif %}
+    </h1>
+    {% for i in lista %}
+        <p> {{i}} </p>
+    {% endfor %}
+{% endblock %}

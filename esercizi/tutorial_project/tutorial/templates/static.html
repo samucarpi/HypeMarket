@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Pagina static{% endblock %}
+{% block content %}
+    <h1>La mia pagina di static</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+{% load static %}
+    <img src='{% static "img/img1.jpg"%}'>
+    <link rel="stylesheet" type="text/css" href='{% static "/css/style.css" %}'>
+{% endblock %}
