@@ -20,8 +20,8 @@ from .init_db import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('catalogo/', include('prodotto.urls'))
+    path('sneakers/', include('prodotto.urls'))
 ]
 
-erase_db()
-init_db()
+#erase_db()
+#init_db()
