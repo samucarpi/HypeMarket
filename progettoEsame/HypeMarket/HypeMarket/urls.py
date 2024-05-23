@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .initcmds import init_db as db
+from .init_db import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('prodotto/', include('prodotto.urls'))
+    path('catalogo/', include('prodotto.urls'))
 ]
 
-db.init_db()
+erase_db()
+init_db()

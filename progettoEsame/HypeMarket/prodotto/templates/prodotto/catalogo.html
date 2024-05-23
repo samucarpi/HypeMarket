@@ -1,18 +1,28 @@
 {% extends "base.html" %}
 
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/catalogo.css' %}">
+{% endblock %}
+
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        {% for prod in catalogo %}
-                <div class="col-sm-3">
-                    <div class="card">
-                        <img src="{{ prod.immagine }}" class="card-img-top" style="width: 9rem; margin:auto" alt="...">
-                        <div class="card-body">
-                            <p class="card-body">{{ prod.titolo }}</p>
-                        </div>
-                    </div>
+    <div id='titolo' class="container">
+        <h1>{{ title }}</h1>
+    </div>
+    <div id='catalogo' class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="row small-gutters">
+                    {% for prod in catalogo %}
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <img src="{{ prod.immagine }}" class="img-fluid lazy loaded" alt="...">
+                                <p class="prod-titolo">{{ prod.titolo }}</p>
+                            </div>
+                    {% endfor %}
                 </div>
-        {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

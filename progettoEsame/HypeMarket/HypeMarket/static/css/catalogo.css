@@ -1,0 +1,22 @@
+p{
+    font-size: small;
+    text-align: center;
+}
+#titolo{
+    text-align: center;
+    padding: 20px;
+    width: 50%;
+    margin-bottom: 20px;
+    background-color: aqua;
+}
+
+#catalogo{
+    margin: auto;
+    text-align: center;
+    width: 65%;
+    min-width: 500px;
+}
+
+.prod-titolo{
+    font-weight: 500;
+}
