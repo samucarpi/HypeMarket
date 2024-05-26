@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import *
 
 def catalogo(request):
+    pagina=1
     for k in request.GET:
         pagina=request.GET[k]
     pagina=int(pagina)

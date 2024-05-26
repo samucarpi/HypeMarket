@@ -10,23 +10,26 @@
 {% block content %}
     <div id='catalogo' class="container">
         <div class="row">
-            <div class="col-lg-7 boxTaglia">
-                <div class="align-items-center d-flex">
-                    <img id="immagine" src="{{ immagine }}">
-                </div>
+            <div class="col-lg-7 boxTaglia text-middle" style="border:1px solid black;">
+                <img id="immagine" src="{{ immagine }}">
             </div>
             <div class="col-lg-5">
                 <div class="row ">
-                    <div class="col-md-12">
+                    <div class="col-md-12 text-middle">
                         <h5>Taglie disponibili:</h5></div>
                     </div>
-                    <div class="col-md-12 text-start">
-                        {% for taglia in taglie %}
-                            <button style="border:1px solid black;white-space: nowrap;" type="button" class="btn justify-content-between col-2 m-2">
-                                {{ taglia }}<br>
-                                100€
-                            </button>
-                        {% endfor %}
+                    <div class="col-md-12">
+                        <div class="row " style='margin:auto;'>
+                            {% for taglia in taglie %}
+                            <div class="col-2 m-1 w-100 h-100" style="white-space: nowrap;">
+                                <input type="checkbox" class="btn-check" id="{{taglia}}" autocomplete="off">
+                                <label  class="btn btn-outline-secondary" for="{{taglia}}">
+                                    {{ taglia }}<br>
+                                    100€
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     <div id="pulsanti" class="row">
                     <div class="col-md-6 text-center">

@@ -20,6 +20,7 @@ from .init_db import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('utente/', include('utente.urls')),
     path('sneakers/', include('prodotto.urls'))
 ]
 
