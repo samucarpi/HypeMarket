@@ -22,3 +22,14 @@ def catalogo(request):
         'paginaMax':paginaMax
     }
     return render(request,template_name=templ,context=ctx)
+
+def prodotto(request,idModello):
+    templ = "prodotto/prodotto.html"
+    ctx = { 
+        "titolo":Prodotto.objects.get(idModello=idModello).titolo,
+        "immagine":Prodotto.objects.get(idModello=idModello).immagine,
+        "idModello":Prodotto.objects.get(idModello=idModello).idModello,
+        "dataRilascio":Prodotto.objects.get(idModello=idModello).dataRilascio,
+        "taglie":Taglia.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello))
+    }
+    return render(request,template_name=templ,context=ctx)

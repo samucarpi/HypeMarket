@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/prodotto.css' %}">
+{% endblock %}
+
+{% block title %}{{ titolo }}{% endblock %}
+
+{% block content %}
+    <div id='catalogo' class="container">
+        <div class="row">
+            <div class="col-lg-7 boxTaglia">
+                <div class="align-items-center d-flex">
+                    <img id="immagine" src="{{ immagine }}">
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="row ">
+                    <div class="col-md-12">
+                        <h5>Taglie disponibili:</h5></div>
+                    </div>
+                    <div class="col-md-12 text-start">
+                        {% for taglia in taglie %}
+                            <button style="border:1px solid black;white-space: nowrap;" type="button" class="btn justify-content-between col-2 m-2">
+                                {{ taglia }}<br>
+                                100€
+                            </button>
+                        {% endfor %}
+                    </div>
+                    <div id="pulsanti" class="row">
+                    <div class="col-md-6 text-center">
+                        <button type="button" class="myButton btn btn-primary">Offri</button>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <button type="button" class="myButton btn btn-primary">Compra</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+
+#catalogo{
+    margin: auto;
+    text-align: center;
+    display: block;
+    margin-top:5%;
+}
+
+#rowTitolo{
+    margin: auto;
+    margin-bottom:50px;
+    text-align: center;
+    width: 60%;
+    min-width: 500px;
+    margin-bottom: 20px;
+}
+
+.imgProd{
+    width: 80%;
+    margin: auto;
+}
+
+
+.boxTaglia{
+    display: block;
+    margin: auto;
+}
+#pulsanti{
+    margin-top: 50px;
+}
+#immagine{
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
+.myButton{
+    width: 80%;
+    padding: 5%;
+}
+.naviga{
+    margin: auto;
+    margin-top: 20px;
+    text-align: center;
+}
