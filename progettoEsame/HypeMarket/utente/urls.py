@@ -9,4 +9,5 @@ urlpatterns = [
     path('registrazione', registrazione, name='Registrazione'),
     path('account', account, name='Account'),
     path('account/modifica-indirizzo', modificaIndirizzo, name='Modifica'),
+     path('account/modifica-indirizzo', modificaIndirizzo, name='Modifica'),
 ]

@@ -47,14 +47,17 @@ class FormLogin(forms.ModelForm):
         helper.layout = Layout(
             Field('email', css_class='form-control'),
             Field('password', css_class='form-control'),
-            Submit('submit', 'Registrati', css_class='btn btn-primary'),
+            Submit('submit', 'Login', css_class='btn btn-primary'),
         )
 
 class FormModificaIndirizzo(forms.ModelForm):
+
     class Meta:
         model = IndirizzoSpedizione
-        fields = ['via', 'citta', 'cap', 'provincia', 'nazione', 'telefono']
+        fields = ['nome','cognome','via', 'citta', 'cap', 'provincia', 'nazione', 'telefono']
 
+    nome=forms.CharField(widget=forms.TextInput(), max_length=25)
+    cognome=forms.CharField(widget=forms.TextInput(), max_length=25)
     via=forms.CharField(widget=forms.TextInput(), max_length=25)
     citta=forms.CharField(widget=forms.TextInput(), max_length=25)
     cap=forms.CharField(widget=forms.TextInput(), max_length=5)
@@ -63,11 +66,15 @@ class FormModificaIndirizzo(forms.ModelForm):
     telefono=forms.CharField(widget=forms.TextInput(), max_length=15)
 
     def __init__(self, *args, **kwargs):
+        self.model = kwargs.pop('model', IndirizzoSpedizione)
         super(FormModificaIndirizzo, self).__init__(*args, **kwargs)
+        self._meta.model = self.model
         helper = FormHelper()
         helper.form_id = 'form-modificaIndirizzo'
         helper.form_method = 'POST'
         helper.layout = Layout(
+            Field('nome', css_class='form-control'),
+            Field('cognome', css_class='form-control'),
             Field('via', css_class='form-control'),
             Field('citta', css_class='form-control'),
             Field('cap', css_class='form-control'),
