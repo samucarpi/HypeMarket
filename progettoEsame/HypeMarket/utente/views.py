@@ -1,19 +1,11 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from .models import *
 from .form import *
-from django.contrib.auth import authenticate
-import time
+from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
-from django.http import HttpResponseRedirect
-from django.contrib.auth import logout
 
-def checkRegistrazione(form,request):
-    if Utente.objects.filter(email=form.cleaned_data['email']).exists():
-        messages.error(request,'Email già registrata')
-        return False
+def checkPassword(form,request):
     if form.cleaned_data['password'] != form.cleaned_data['confermaPassword']:
         messages.error(request,'Password non corrispondenti')
         return False
@@ -22,30 +14,28 @@ def checkRegistrazione(form,request):
 def registrazione(request):
     templ='utente/registrazione.html'
     if request.method == 'POST':
-        form = FormRegistrazione(request.POST)
-        if form.is_valid() and checkRegistrazione(form,request):
+        form = Registrazione(request.POST)
+        if form.is_valid() and checkPassword(form,request):
             form.save()
             messages.success(request, 'Sei stato registrato con successo!')
-            return render(request,template_name=templ,context={'form':form})
+            return redirect('utente:Login')
         else:
             return render(request,template_name=templ,context={'form':form})
     else:
-        form = FormRegistrazione()
+        form = Registrazione()
         return render(request,template_name=templ,context={'form':form})
 
 def loginForm(request):
-    logout(request)
     templ='utente/login.html'
     if request.method == 'POST':
-        form = FormLogin(request.POST)
+        form = Login(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email']
+            username=form.cleaned_data['username']
             password=form.cleaned_data['password']
-            utente=authenticate(email=email,password=password)
-            print(utente)
-            if utente != None:
-                login(request,utente)
-                return redirect('http://localhost:8000/utente/account')
+            user = authenticate(request,username=username,password=password)
+            if user is not None:
+                login(request,user)
+                return redirect('utente:Account')
             else:
                 messages.error(request,'Email o password errati')
                 return render(request,template_name=templ,context={'form':form})
@@ -53,15 +43,19 @@ def loginForm(request):
             messages.error(request,'Email o password errati')
             return render(request,template_name=templ,context={'form':form})
     else:
-        form = FormLogin()
+        form = Login()
         return render(request,template_name=templ,context={'form':form})
     
-@login_required(login_url='http://localhost:8000/utente/login')
+def logoutAction(request):
+    logout(request)
+    return redirect('prodotto:Home')
+    
+@login_required(login_url='utente:Login')
 def account(request):
     templ='utente/account.html'
     ctx={}
+    utente = request.user
     indirizzoSpedizione,indirizzoFatturazione,banca,carta=None,None,None,None
-    utente = request.user.id
     if utente:
         if IndirizzoSpedizione.objects.filter(utente=utente).exists():
             for indirizzo in IndirizzoSpedizione.objects.filter(utente=utente):
@@ -84,21 +78,131 @@ def account(request):
         }
     return render(request,template_name=templ,context=ctx)
 
-def modificaIndirizzo(request):
-    templ='utente/modificaIndirizzo.html'
-    user=Utente.objects.get(email=request.session['email'])
-    query=IndirizzoSpedizione.objects.filter(utente=user)
+def checkInformazioni(form,request):
+    if form.cleaned_data['dataNascita'] != None:
+        if form.cleaned_data['dataNascita'] > time.now().date():
+            messages.error(request,'Data di nascita non valida')
+            return False
+        if form.cleaned_data['dataNascita'].year < 1900:
+            messages.error(request,'Data di nascita non valida')
+            return False
+        if time.now().year - form.cleaned_data['dataNascita'].year > 100:
+            messages.error(request,'Data di nascita non valida')
+            return False
+        if time.now().year - form.cleaned_data['dataNascita'].year < 18:
+            messages.error(request,'È necessario avere almeno 18 anni')
+            return False
+        return True
+    return True
+
+@login_required(login_url='utente:Login')
+def modificaInformazioni(request):
+    templ='utente/modifica.html'
+    utente = request.user
     if request.method == 'POST':
-        form = FormModificaIndirizzo(request.POST,model=IndirizzoSpedizione)
-        if form.is_valid():
-            if query.exists():
-                query.delete()
-            form.save(user=user)
-            return HttpResponseRedirect('http://localhost:8000/utente/account')
+        form = Informazioni(request.POST)
+        if form.is_valid() and checkInformazioni(form,request):
+            form.save(user=utente)
+            return redirect('utente:Account')
         else:
             return render(request,template_name=templ,context={'form':form})
     else:
-        form = FormModificaIndirizzo()
+        form = Informazioni()
+        return render(request,template_name=templ,context={'form':form})
+
+@login_required(login_url='utente:Login')
+def modificaIndirizzoSpedizione(request):
+    templ='utente/modifica.html'
+    utente = request.user
+    if request.method == 'POST':
+        form = Spedizione(request.POST)
+        if form.is_valid():
+            if IndirizzoSpedizione.objects.filter(utente=utente).exists():
+                IndirizzoSpedizione.objects.filter(utente=utente).delete()
+            form.save(user=utente)
+            return redirect('utente:Account')
+        else:
+            return render(request,template_name=templ,context={'form':form})
+    else:
+        form = Spedizione()
         return render(request,template_name=templ,context={'form':form})
     
+@login_required(login_url='utente:Login')
+def modificaIndirizzoFatturazione(request):
+    templ='utente/modifica.html'
+    utente = request.user
+    if request.method == 'POST':
+        form = Fatturazione(request.POST)
+        if form.is_valid():
+            if IndirizzoFatturazione.objects.filter(utente=utente).exists():
+                IndirizzoFatturazione.objects.filter(utente=utente).delete()
+            form.save(user=utente)
+            return redirect('utente:Account')
+        else:
+            return render(request,template_name=templ,context={'form':form})
+    else:
+        form = Fatturazione()
+        return render(request,template_name=templ,context={'form':form})
+
+def checkBanca(form,request):
+    if len(form.cleaned_data['iban']) != 27:
+        messages.error(request,'IBAN non valido')
+        return False
+    return True
+
+@login_required(login_url='utente:Login')
+def modificaBanca(request):
+    templ='utente/modifica.html'
+    utente = request.user
+    if request.method == 'POST':
+        form = Banca(request.POST)
+        if form.is_valid() and checkBanca(form,request):
+            form.save(user=utente)
+            return redirect('utente:Account')
+        else:
+            return render(request,template_name=templ,context={'form':form})
+    else:
+        form = Banca()
+        return render(request,template_name=templ,context={'form':form})
+    
+def checkCarta(form,request):
+    try:
+        int(form.cleaned_data['numero'])
+        scadenzaMese=int(form.cleaned_data['scadenzaMese'])
+        scadenzaAnno=int(form.cleaned_data['scadenzaAnno'])
+        int(form.cleaned_data['cvv'])
+    except ValueError:
+        messages.error(request,'Inserire solo numeri')
+        return False
+    if len(form.cleaned_data['numero']) != 16:
+        messages.error(request,'Numero carta non valido')
+        return False
+    if len(form.cleaned_data['scadenzaMese']) != 2 or (scadenzaMese < 1 or scadenzaMese > 12):
+        messages.error(request,'Mese scadenza non valido')
+        return False
+    if len(form.cleaned_data['scadenzaAnno']) != 4 or (scadenzaAnno < time.now().year or scadenzaAnno > time.now().year+10):
+        messages.error(request,'Anno scadenza non valido')
+        return False
+    if scadenzaMese<time.now().month and scadenzaAnno==time.now().year:
+        messages.error(request,'Mese scadenza non valido')
+        return False
+    if len(form.cleaned_data['cvv']) != 3:
+        messages.error(request,'CVV non valido')
+        return False
+    return True
+
+@login_required(login_url='utente:Login')
+def modificaCarta(request):
+    templ='utente/modifica.html'
+    utente = request.user
+    if request.method == 'POST':
+        form = Carta(request.POST)
+        if form.is_valid() and checkCarta(form,request):
+            form.save(user=utente)
+            return redirect('utente:Account')
+        else:
+            return render(request,template_name=templ,context={'form':form})
+    else:
+        form = Carta()
+        return render(request,template_name=templ,context={'form':form})
     

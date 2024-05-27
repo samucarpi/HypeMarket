@@ -12,6 +12,17 @@
             </div>
             <div class="col-md-6" id='form'>
                 <h2 class='text-center'>Login</h2>
+                <div id='messaggi'>
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success" role="alert">
+                                    {{message}}
+                                </div>
+                            {%endif%}
+                        {% endfor %}
+                    {% endif %}
+                </div>
                 <form method="post">{% csrf_token %}
                     {{form|crispy}}
                     <div class="row mx-auto text-center">
@@ -23,13 +34,15 @@
                 <div id='messaggi'>
                     {% if messages %}
                         {% for message in messages %}
-                            <div class="alert alert-danger" role="alert">
-                                {{message}}
-                            </div>
+                            {% if message.tags != 'success' %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{message}}
+                                </div>
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                 </div>
-                <p id='domanda'> Non hai un account? <a href="{{ 'http://localhost:8000/utente/login' }}">Registrati</a></p>
+                <p id='domanda'> Non hai un account? <a href="{{'http://localhost:8000/utente/registrazione' }}">Registrati</a></p>
             </div>
             <div class="col-md-3">
             </div>

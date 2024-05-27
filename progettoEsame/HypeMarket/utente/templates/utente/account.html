@@ -5,152 +5,227 @@
 {% endblock %}
 {% block title %}Profilo{% endblock %}
 {% block content %}
+{{block.super}}
     <div class="container">
         <div class="row">
-            <h2 class='text-center'>Profilo</h2>
-            <div class='row'>
-                <div class='col-md-3'>
-                </div>
-                <div class='col-md-6'>
-                    <div class='row'>
-                        <div class='col-3'>
-                            <p>Nome</p>
-                            <p>{{ utente.nome }}</p>
-                        </div> 
-                        <div class='col-3'>
-                            <p>Cognome</p>
-                            <p>{{ utente.cognome }}</p>
-                        </div>
-                        <div class='col-3'>
-                            <p>Email</p>
-                            <p>{{ utente.email }}</p>
-                        </div>
-                        <div class='col-3'>
-                            <button type="button" class=" btn btn-primary" >Cambia password</button>
-                        </div>
+            <div class='col-md-2'>
+            </div>
+            <div class='col-md-8'>
+                <h2 class='text-center'>Profilo</h2>
+                
+                <div class='row paragrafo'>
+                    <div class='col-11'>
+                        <p>Dati personali</p>
                     </div>
-                    <div class='row'>
-                        <div class='col-10'>
-                            <p>Indirizzo di spedizione</p>
-                        </div>
-                        <div class='col-2'>
-                            <button type="button" class=" btn btn-primary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-indirizzo'">Modifica</button>
-                        </div>
-                        <div class='row'>
-                            <div class='col-4'>
-                                <p>Nome</p>
-                                <p>{{ indirizzoSpedizione.nome }} {{ indirizzoSpedizione.cognome }}</p>
-                            </div>
-                            <div class='col-4'>
-                                <p>Indirizzo</p>
-                                <div>
-                                    <p>{{ indirizzoSpedizione.via }}<p>
-                                    <p>{{ indirizzoSpedizione.citta }}<p>
-                                    <p>{{ indirizzoSpedizione.provincia }}<p>
-                                    <p>{{ indirizzoSpedizione.cap }}<p>
-                                    <p>{{ indirizzoSpedizione.nazione }}<p>
-                                </div>
-                            </div>
-                            <div class='col-4'>
-                                <p>Numero di telefono</p>
-                                <p>{{ indirizzoSpedizione.telefono }} </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class='row'>
-                        <div class='col-10'>
-                            <p>Indirizzo di fatturazione</p>
-                        </div>
-                        <div class='col-2'>
-                            <button type="button" class=" btn btn-primary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-indirizzo?tipo='">Modifica</button>
-                        </div>
-                        <div class='row'>
-                            <div class='col-4'>
-                                <p>Nome</p>
-                                <p>{{ indirizzoFatturazione.nome }} {{ indirizzoFatturazione.cognome }}</p>
-                            </div>
-                            <div class='col-4'>
-                                <p>Indirizzo</p>
-                                <div>
-                                    <p>{{ indirizzoFatturazione.via }}<p>
-                                    <p>{{ indirizzoFatturazione.citta }}<p>
-                                    <p>{{ indirizzoFatturazione.provincia }}<p>
-                                    <p>{{ indirizzoFatturazione.cap }}<p>
-                                    <p>{{ indirizzoFatturazione.nazione }}<p>
-                                </div>
-                            </div>
-                            <div class='col-4'>
-                                <p>Numero di telefono</p>
-                                <p>{{ indirizzoFatturazione.telefono }} </p>
-                            </div>
-                            <div class='col-4'>
-                                <p>Data di nascita</p>
-                                <p>{{ utente.dataNascita }} </p>
-                            </div>       
-                            <div class='col-4'>
-                                <p>Partita IVA</p>
-                                <p>{{ utente.pIva }} </p>
-                            </div>                    
-                        </div>
-                    </div>
-
-                    <div class='row'>
-                        <div class='col-10'>
-                            <p>Dati bancari</p>
-                        </div>
-                        <div class='col-2'>
-                            <button type="button" class=" btn btn-primary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-indirizzo'">Modifica</button>
-                        </div>
-                        <div class='row'>
-                            <div class='col-4'>
-                                <p>Intestatario</p>
-                                <p>{{ banca.nome}}{{ banca.cognnome }}</p>
-                            </div>
-                            <div class='col-4'>
-                                <p>IBAN</p>
-                                <div>
-                                    <p>{{ banca.iban }}<p>
-                                </div>
-                            </div>
-                            <div class='col-4'>
-                                <p>Nome della banca</p>
-                                <p>{{ banca.nome }} </p>
-                            </div>                 
-                        </div>
-                    </div>
-
-                    <div class='row'>
-                        <div class='col-10'>
-                            <p>Metodo di pagamento</p>
-                        </div>
-                        <div class='col-2'>
-                            <button type="button" class=" btn btn-primary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-indirizzo'">Modifica</button>
-                        </div>
-                        <div class='row'>
-                            <div class='col-3'>
-                                <p></p>
-                                <p>{{ carta.nome}}{{ carta.cognnome }}</p>
-                            </div>
-                            <div class='col-3'>
-                                <p>Numero</p>
-                                <div>
-                                    <p>{{ carta.numero }}<p>
-                                </div>
-                            </div>
-                            <div class='col-3'>
-                                <p>Data di scadenza</p>
-                                <p>{{ carta.scadenza }} </p>
-                            </div>
-                            <div class='col-3'>
-                                <p>CVV</p>
-                                <p>{{ carta.cvv }} </p>
-                            </div>                 
-                        </div>
+                    <div class='col-1'>
+                        <button type="button" class=" btn btn-secondary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-informazioni'"><i class="bi bi-pencil"></i></button>
                     </div>
                 </div>
-                <div class='col-md-3'>
+
+                <div class='row'>
+                    <div class='col-4'>
+                        <p class='campo'>Username</p>
+                        {{ utente.username }}
+                    </div> 
+                    <div class='col-4'>
+                        <p class='campo'>Nome</p>
+                        {{ utente.nome }}
+                    </div> 
+                    <div class='col-4'>
+                        <p class='campo'>Cognome</p>
+                        {{ utente.cognome }}
+                    </div>
+                    <div class='col-4'>
+                        <p class='campo'>Email</p>
+                        {{ utente.email }}
+                    </div>
+                    <div class='col-4'>
+                        <p class='campo'>Data di nascita</p>
+                        {% if  utente.dataNascita %}
+                            {{ utente.dataNascita }}
+                        {%else%}
+                            **/**/****
+                        {% endif %}
+                    </div>
+                    <div class='col-4'>
+                        <p class='campo'> Numero iva</p>
+                        {% if  utente.pIva %}
+                            {{ utente.pIva }}
+                        {%else%}
+                            **********
+                        {% endif %}
+                    </div>
                 </div>
+
+                <div class='row paragrafo'>
+                    <div class='col-11'>
+                        <p>Indirizzo di spedizione</p>
+                    </div>
+                    <div class='col-1'>
+                        <button type="button" class=" btn btn-secondary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-indirizzo-spedizione'"><i class="bi bi-pencil"></i></button>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-4'>
+                        <p class='campo'>Nome</p>
+                        {% if indirizzoSpedizione %}
+                            {{ indirizzoSpedizione.nome }} {{ indirizzoSpedizione.cognome }}
+                        {%else%}
+                            **** ****
+                        {% endif %}
+                    </div>
+                    <div class='col-4'>
+                        <p class='campo'>Indirizzo</p>
+                        {% if indirizzoSpedizione %}
+                            <div>
+                                {{ indirizzoSpedizione.via }}<br>
+                                {{ indirizzoSpedizione.citta }}<br>
+                                {{ indirizzoSpedizione.provincia }}<br>
+                                {{ indirizzoSpedizione.cap }}<br>
+                                {{ indirizzoSpedizione.nazione }}<br>
+                            </div>
+                        {%else%}
+                            ************ <br>
+                            *********** <br>
+                            ********** <br>
+                            ********* <br>
+                            ******** <br>
+                        {% endif %}
+                    </div>
+                    <div class='col-4'>
+                        <p class='campo'>Cellulare</p>
+                        {% if indirizzoSpedizione %}
+                            {{ indirizzoSpedizione.telefono }}
+                        {%else%}
+                            ********
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class='row paragrafo'>
+                    <div class='col-11'>
+                        <p>Indirizzo di fatturazione</p>
+                    </div>
+                    <div class='col-1'>
+                        <button type="button" class=" btn btn-secondary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-indirizzo-fatturazione'"><i class="bi bi-pencil"></i></button>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-4'>
+                        <p class='campo'>Nome</p>
+                        {% if indirizzoFatturazione %}
+                            {{ indirizzoFatturazione.nome }} {{ indirizzoFatturazione.cognome }}
+                        {%else%}
+                            **** ****
+                        {% endif %}
+                    </div>
+                    <div class='col-4'>
+                        <p class='campo'>Indirizzo</p>
+                        {% if indirizzoFatturazione %}
+                            <div>
+                                {{ indirizzoFatturazione.via }}<br>
+                                {{ indirizzoFatturazione.citta }}<br>
+                                {{ indirizzoFatturazione.provincia }}<br>
+                                {{ indirizzoFatturazione.cap }}<br>
+                                {{ indirizzoFatturazione.nazione }}<br>
+                            </div>
+                        {%else%}
+                            ************ <br>
+                            *********** <br>
+                            ********** <br>
+                            ********* <br>
+                            ******** <br>
+                        {% endif %}
+                    </div>
+                    <div class='col-4'>
+                        <p class='campo'>Cellulare</p>
+                        {% if indirizzoFatturazione %}
+                            {{ indirizzoFatturazione.telefono }}
+                        {%else%}
+                            ********
+                        {% endif %}
+                    </div>               
+                </div>
+
+                <div class='row paragrafo'>
+                    <div class='col-11'>
+                        <p>Dati bancari</p>
+                    </div>
+                    <div class='col-1'>
+                        <button type="button" class=" btn btn-secondary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-banca'"><i class="bi bi-pencil"></i></button>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-3'>
+                        <p class='campo'>Intestatario</p>
+                        {% if banca %}
+                            {{ banca.nome}} {{ banca.cognome }}
+                        {%else%}
+                            **** ****
+                        {% endif %}
+                    </div>
+                    <div class='col-6'>
+                        <p class='campo'>IBAN</p>
+                        {% if banca %}
+                            {{ banca.iban }}
+                        {%else%}
+                            ************************** 
+                        {% endif %}
+                    </div>
+                    <div class='col-3'>
+                        <p class='campo'>Banca</p>
+                        {% if banca %}
+                            {{ banca.banca }}
+                        {%else%}
+                            ****
+                        {% endif %}
+                    </div>                 
+                </div>
+
+                <div class='row paragrafo'>
+                    <div class='col-11'>
+                        <p>Metodo di pagamento</p>
+                    </div>
+                    <div class='col-1'>
+                        <button type="button" class=" btn btn-secondary" onclick="location.href = 'http://localhost:8000/utente/account/modifica-carta'"><i class="bi bi-pencil"></i></button>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-3'>
+                        <p class='campo'> Intestatario</p>
+                        {% if carta%}
+                            {{ carta.nome}} {{ carta.cognome }}
+                        {%else%}
+                            **** ****
+                        {% endif %}
+                    </div>
+                    <div class='col-3'>
+                        <p class='campo'>Numero</p>
+                        {% if carta %}
+                            {{ carta.numero }}
+                        {%else%}
+                            **** **** **** ****
+                        {% endif %}
+                    </div>
+                    <div class='col-3'>
+                        <p class='campo'>Scadenza</p>
+                        {% if carta %}
+                            {{ carta.scadenzaMese }}/{{ carta.scadenzaAnno }}
+                        {%else%}
+                            ** / **
+                        {% endif %}
+                    </div>
+                    <div class='col-3'>
+                        <p class='campo'>CVV</p>
+                        {% if carta %}
+                            {{ carta.cvv }}
+                        {%else%}
+                            ***
+                        {% endif %}
+                    </div>                 
+                </div>
+            </div>
+            <div class='col-md-2'>
             </div>
         </div>
     </div>

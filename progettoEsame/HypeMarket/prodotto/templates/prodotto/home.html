@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/catalogo.css' %}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+{{block.super}}
+    <div id='catalogo' class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="row small-gutters">
+                    {% for prod in catalogo %}
+                            <a class="col col-6 col-md-4 col-lg-3 mb-4" href="http://localhost:8000/sneakers/{{prod.idModello}}">
+                                <img src="{{ prod.immagine }}" class="imgProd" alt="...">
+                                <p class="titoloProd">{{ prod.titolo }}</p>
+                            </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <nav class="naviga">
+                <ul class="pagination">
+                    {% if pagina == 1 %}
+                        <li class="page-item disabled"><a class="page-link"><i class="bi bi-arrow-left"></i></a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="http://localhost:8000/sneakers/home?p={{paginaMeno1}}"><i class="bi bi-arrow-left"></i></a></li>
+                    {% endif %}
+                    <li class="page-item active"><a class="page-link" href="http://localhost:8000/sneakers/home?p={{pagina}}">{{pagina}}</a></li>
+
+                    {% if paginaPiu1 <= paginaMax %}
+                        <li class="page-item"><a class="page-link" href="http://localhost:8000/sneakers/home?p={{paginaPiu1}}">{{paginaPiu1}}</a></li>
+                    {% endif %}
+
+                    {% if paginaPiu2 <= paginaMax %}
+                        <li class="page-item"><a class="page-link" href="http://localhost:8000/sneakers/home?p={{paginaPiu2}}">{{paginaPiu2}}</a></li>
+                    {% endif %}
+
+                    {% if pagina == paginaMax %}
+                        <li class="page-item disabled" ><a class="page-link" ><i class="bi bi-arrow-right"></i></a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="http://localhost:8000/sneakers/home?p={{paginaPiu1}}"><i class="bi bi-arrow-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}

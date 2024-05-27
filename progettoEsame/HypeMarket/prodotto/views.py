@@ -1,18 +1,20 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from .models import *
 
-def catalogo(request):
-    pagina=1
-    for k in request.GET:
-        pagina=request.GET[k]
-    pagina=int(pagina)
+def home(request):
+    pagina=request.GET.get('p')
+    try:
+        pagina=int(pagina)
+    except:
+        pagina=1
     selezione_inizo=(pagina-1)*24
     selezione_fine=pagina*24
     catalogo=Prodotto.objects.all()[selezione_inizo:selezione_fine]
     paginaMax=int(len(Prodotto.objects.all())/24+1)
-    templ = "prodotto/catalogo.html"
-    ctx = { 
+    templ = "prodotto/home.html"
+    utente = request.user
+    ctx = {
+        'utente':utente,
         "title":"Catalogo sneakers", 
         "catalogo": catalogo, 
         "taglie":Taglia.objects.all(),
