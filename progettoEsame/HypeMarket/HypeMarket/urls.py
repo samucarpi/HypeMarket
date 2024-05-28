@@ -23,6 +23,6 @@ urlpatterns = [
     path('utente/', include('utente.urls')),
     path('sneakers/', include('prodotto.urls'))
 ]
-
+ 
 #erase_db()
 #init_db()

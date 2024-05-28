@@ -9,52 +9,69 @@
 
 {% block content %}
 {{block.super}}
-    <div class="container">
+    <div class="container d-flex align-items-center" style="min-height: 90vh;">
         <div class="row">
-            <div class="col-12 text-center" style="white-space: nowrap;">
-                <h3>{{ titolo }}</h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-            </div>
-            <div class="col-6">
-                <img id="immagine" src="{{ immagine }}">
-            </div>
-            <div class="col-3">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-2">
-            </div>
-            <div class="col-8">
-                <div class="row">
+            <div class="col-12 col-lg-6 ">
+                <div class='row'>
+                    <div class="col-12 text-left" style="white-space: nowrap;">
+                        <br>
+                        <h3>{{ titolo }}</h3>
+                    </div>
+                </div>
+                <div class='row'>
                     <div class="col-12 text-center">
-                        <h5>Taglie disponibili:</h5></div>
-                    </diV>
-                <div class="row justify-content-center" style="white-space: nowrap;">
-                    {% for taglia in taglie %}
-                        <input type="checkbox" class="btn-check" id="{{taglia}}" autocomplete="off">
-                        <label class=" col-2 m-1 btn btn-outline-dark d-flex justify-content-center" for="{{taglia}}">
-                            {{ taglia }}<br>
-                            ---
-                        </label>
-                    {% endfor %}
+                        <img style='width:115%;'src="{{ immagine }}">
+                    </div>
                 </div>
             </div>
-            <div class="col-2">
+            <div class='col-lg-1'>
             </div>
-        </div>
-        <div class="row mt-4" id="bottoni">
-            <div class="col-3 text-center">
-            </div>
-            <div class="col-3 text-center">
-                <button type="button" id="offri" class="btn btn-dark w-100 disabled">Offri</button>
-            </div>
-            <div class="col-3 text-center">
-                <button type="button" id="acquista" class="btn btn-dark w-100 disabled">Acquista ora</button>
-            </div>
-            <div class="col-3 text-center">
+            <div class="info col-12 col-lg-5">
+                <div class='row'>
+                    <div class="col-1"></div>
+                    <div class='col-10'>
+                        <div class='row contenitore'>
+                            <div class="col-6">
+                                <button type="button" id="offri" class="btn btn-dark w-100 disabled">Offri</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" id="proponi" class="btn btn-dark w-100 disabled">Proponi</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+                <br>
+                <div class='contenitore'>
+                    <div class=" row">
+                        <div class="col-12 text-center">
+                            <h5>Taglie disponibili:</h5></div>
+                        </diV>
+                        <div class="row justify-content-center" style="white-space: nowrap;">
+                            {% for taglia in taglie %}
+                                <input type="checkbox" class="btn-check" id="{{taglia}}" autocomplete="off">
+                                <label class=" col-2 m-1 btn btn-outline-dark d-flex justify-content-center" for="{{taglia}}">
+                                    {{ taglia }}<br>
+                                    {% if taglia.propostaMinore != None %}
+                                        {{ taglia.propostaMinore }} €
+                                    {% else %}
+                                        ---
+                                    {% endif %}
+
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
+                    <div class='row'>
+                        <div class='col-1'></div>
+                        <div class="col-10 text-center">
+                            <button type="button" id="acquista" class="btn btn-dark w-100 disabled">Acquista ora</button>
+                        </div>
+                        <div class='col-1'></div>
+                    </div>
+                    <br>
+                </div>
             </div>
         </div>
     </div>
@@ -65,9 +82,9 @@
     $('input[type="checkbox"]').on('change', function() {
         $('input[type="checkbox"]').not(this).prop('checked', false);
         if ($(this).is(':checked')) {
-            $('#bottoni button').removeClass('disabled');
+            $('.btn-dark').removeClass('disabled');
         } else {
-            $('#bottoni button').addClass('disabled');
+            $('.btn-dark').addClass('disabled');
         }
     });
 
@@ -81,10 +98,11 @@
     });
 
 
-    $('#acquista').on('click', function() {
+    $('#proponi').on('click', function() {
         var taglia = $('input[type="checkbox"]:checked').attr('id');
+        var prodotto = '{{ idModello}}'
         if (taglia) {
-            window.location.href = '/sneakers/HQ8707?taglia=' + taglia;
+            window.location.href = '/sneakers/'+prodotto+'/proposta?taglia=' + taglia;
         }
     });
 </script>

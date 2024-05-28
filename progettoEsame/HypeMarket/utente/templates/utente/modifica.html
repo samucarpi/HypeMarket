@@ -14,12 +14,29 @@
             <div class="col-md-6" id='form'>
                 <div class='row'>
                     <div class="col-12">
-                        <button onclick="location.href = 'http://localhost:8000/utente/account'" class="btn btn-danger"><i class="bi bi-x-square-fill"></i>
+                        <button onclick="location.href = '{{ url}}'" class="btn btn-danger"><i class="bi bi-x-square-fill"></i>
                         </button>
                     </div>
                 </div>
                 <div class='row'>
-                    <h2 class='text-center'>Modifica</h2>
+                    {% if offerta %}
+                        <h2 class='text-center'>Inserisci un'offerta</h2>
+                    {% elif proposta %}
+                        <h2 class='text-center'>Inserisci una proposta</h2>
+                    {% else %}
+                        <h2 class='text-center'>Modifica</h2>
+                    {% endif %}
+                    {% if offerta or proposta%}
+                        {% if offertaMaggiore %}
+                            <h5 class='text-center'>L'offerta più alta sul prodotto è di: {{offertaMaggiore.prezzo}}€ </h5>
+                        {% elif propostaMinore %}
+                            <h5 class='text-center'>La proposta più bassa sul prodotto è di: {{propostaMinore.prezzo}}€ </h5>
+                        {% else %}
+                            <h5 class='text-center'>Nessun prezzo presente per questa taglia! </h5>
+                        {% endif %}
+                    {% else %}
+                        <h2 class='text-center'>Modifica</h2>
+                    {% endif %}
                     <form method="POST">{% csrf_token %}
                         {{form|crispy}}
                         <div class="row mx-auto text-center">

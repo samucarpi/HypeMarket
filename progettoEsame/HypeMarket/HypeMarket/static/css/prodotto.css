@@ -1,0 +1,26 @@
+body {
+    overflow-x:hidden;
+}
+
+#acquista, #offri, #proponi{
+    padding: 10px;
+}
+
+.info{
+    background-color: #e3e6e8;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #f8f9fa;
+}
+
+.contenitore{
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #f8f9fa;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+}

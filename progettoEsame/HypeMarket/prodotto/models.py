@@ -13,6 +13,8 @@ class Prodotto(models.Model):
 class Taglia(models.Model):
     prodotto=models.ForeignKey(Prodotto,related_name='taglie', on_delete=models.CASCADE)
     taglia=models.CharField(max_length=5)
+    propostaMinore=models.FloatField(null=True, blank=True)
+    offertaMaggiore=models.FloatField(null=True, blank=True)
 
     def __str__(self):
         out = self.taglia + " \n "

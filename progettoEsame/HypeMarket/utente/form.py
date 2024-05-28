@@ -202,3 +202,61 @@ class Carta(forms.ModelForm):
         if commit:
             carta.save()
         return carta
+    
+class OffertaForm(forms.ModelForm):
+    
+    class Meta:
+        model = Offerta
+        fields = ['prezzo']
+
+    prezzo=forms.FloatField(widget=forms.NumberInput())
+
+    def __init__(self, *args, **kwargs):
+        super(OffertaForm, self).__init__(*args, **kwargs)
+        helper = FormHelper()
+        helper.form_id = 'form-offerta'
+        helper.form_method = 'POST'
+        helper.layout = Layout(
+            Field('prezzo', css_class='form-control'),
+            Submit('submit', 'Registrati', css_class='btn btn-primary'),
+        )
+    
+    def save(self, commit=True, user=None, prodotto=None, taglia=None):
+        offerta = super().save(commit=False)
+        if user:
+            offerta.taglia = taglia
+            offerta.utente = user
+            offerta.prodotto = prodotto
+            offerta.data=time.now().date()
+        if commit:
+            offerta.save()
+        return offerta
+    
+class PropostaForm(forms.ModelForm):
+    
+    class Meta:
+        model = Proposta
+        fields = ['prezzo']
+
+    prezzo=forms.FloatField(widget=forms.NumberInput())
+
+    def __init__(self, *args, **kwargs):
+        super(PropostaForm, self).__init__(*args, **kwargs)
+        helper = FormHelper()
+        helper.form_id = 'form-proposta'
+        helper.form_method = 'POST'
+        helper.layout = Layout(
+            Field('prezzo', css_class='form-control'),
+            Submit('submit', 'Registrati', css_class='btn btn-primary'),
+        )
+    
+    def save(self, commit=True, user=None, prodotto=None, taglia=None):
+        proposta = super().save(commit=False)
+        if user:
+            proposta.taglia = taglia
+            proposta.utente = user
+            proposta.prodotto = prodotto
+            proposta.data=time.now().date()
+        if commit:
+            proposta.save()
+        return proposta

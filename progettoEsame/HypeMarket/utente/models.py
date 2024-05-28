@@ -1,5 +1,5 @@
 from django.db import models
-from prodotto.models import Prodotto
+from prodotto.models import *
 from django.contrib.auth.models import AbstractUser
 from django_countries.fields import CountryField
 from datetime import datetime as time
@@ -57,5 +57,13 @@ class Wishlist(models.Model):
 class Offerta(models.Model):
     utente=models.ForeignKey(Utente,related_name='offerte', on_delete=models.CASCADE)
     prodotto=models.ForeignKey(Prodotto,related_name='offerte', on_delete=models.CASCADE)
+    taglia=models.ForeignKey(Taglia,related_name='offerte', on_delete=models.CASCADE)
+    prezzo=models.FloatField()
+    data=models.DateField()
+
+class Proposta(models.Model):
+    utente=models.ForeignKey(Utente,related_name='proposte', on_delete=models.CASCADE)
+    prodotto=models.ForeignKey(Prodotto,related_name='proposte', on_delete=models.CASCADE)
+    taglia=models.ForeignKey(Taglia,related_name='proposte', on_delete=models.CASCADE)
     prezzo=models.FloatField()
     data=models.DateField()
