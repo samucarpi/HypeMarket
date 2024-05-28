@@ -1,5 +1,4 @@
 from django.db import models
-from datetime import datetime
 
 class Prodotto(models.Model):
     titolo=models.CharField(max_length=50)

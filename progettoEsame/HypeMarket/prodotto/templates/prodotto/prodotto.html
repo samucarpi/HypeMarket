@@ -8,39 +8,84 @@
 {% block title %}{{ titolo }}{% endblock %}
 
 {% block content %}
-    <div id='catalogo' class="container">
+{{block.super}}
+    <div class="container">
         <div class="row">
-            <div class="col-lg-7 boxTaglia text-middle" style="border:1px solid black;">
+            <div class="col-12 text-center" style="white-space: nowrap;">
+                <h3>{{ titolo }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+            </div>
+            <div class="col-6">
                 <img id="immagine" src="{{ immagine }}">
             </div>
-            <div class="col-lg-5">
-                <div class="row ">
-                    <div class="col-md-12 text-middle">
+            <div class="col-3">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-12 text-center">
                         <h5>Taglie disponibili:</h5></div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="row " style='margin:auto;'>
-                            {% for taglia in taglie %}
-                            <div class="col-2 m-1 w-100 h-100" style="white-space: nowrap;">
-                                <input type="checkbox" class="btn-check" id="{{taglia}}" autocomplete="off">
-                                <label  class="btn btn-outline-secondary" for="{{taglia}}">
-                                    {{ taglia }}<br>
-                                    100€
-                                </label>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div id="pulsanti" class="row">
-                    <div class="col-md-6 text-center">
-                        <button type="button" class="myButton btn btn-primary">Offri</button>
-                    </div>
-                    <div class="col-md-6 text-center">
-                        <button type="button" class="myButton btn btn-primary">Compra</button>
-                    </div>
+                    </diV>
+                <div class="row justify-content-center" style="white-space: nowrap;">
+                    {% for taglia in taglie %}
+                        <input type="checkbox" class="btn-check" id="{{taglia}}" autocomplete="off">
+                        <label class=" col-2 m-1 btn btn-outline-dark d-flex justify-content-center" for="{{taglia}}">
+                            {{ taglia }}<br>
+                            ---
+                        </label>
+                    {% endfor %}
                 </div>
-                </div>
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <div class="row mt-4" id="bottoni">
+            <div class="col-3 text-center">
+            </div>
+            <div class="col-3 text-center">
+                <button type="button" id="offri" class="btn btn-dark w-100 disabled">Offri</button>
+            </div>
+            <div class="col-3 text-center">
+                <button type="button" id="acquista" class="btn btn-dark w-100 disabled">Acquista ora</button>
+            </div>
+            <div class="col-3 text-center">
             </div>
         </div>
     </div>
 {% endblock %}
+{% block script%}
+<script>
+
+    $('input[type="checkbox"]').on('change', function() {
+        $('input[type="checkbox"]').not(this).prop('checked', false);
+        if ($(this).is(':checked')) {
+            $('#bottoni button').removeClass('disabled');
+        } else {
+            $('#bottoni button').addClass('disabled');
+        }
+    });
+
+
+    $('#offri').on('click', function() {
+        var taglia = $('input[type="checkbox"]:checked').attr('id');
+        var prodotto = '{{ idModello}}'
+        if (taglia) {
+            window.location.href = '/sneakers/'+prodotto+'/offerta?taglia=' + taglia;
+        }
+    });
+
+
+    $('#acquista').on('click', function() {
+        var taglia = $('input[type="checkbox"]:checked').attr('id');
+        if (taglia) {
+            window.location.href = '/sneakers/HQ8707?taglia=' + taglia;
+        }
+    });
+</script>
+{%endblock%}

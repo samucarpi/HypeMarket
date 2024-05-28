@@ -36,3 +36,14 @@ def prodotto(request,idModello):
         "taglie":Taglia.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello))
     }
     return render(request,template_name=templ,context=ctx)
+
+def offerta(request,idModello):
+    templ = "utente/modifica.html"
+    prodotto = Prodotto.objects.get(idModello=idModello)
+    taglia= request.GET.get('taglia')
+    for t in Taglia.objects.filter(prodotto=prodotto):
+        if t.taglia == taglia:
+            break
+    
+    return render(request,template_name=templ)
+
