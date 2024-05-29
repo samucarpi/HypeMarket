@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import *
-from .form import *
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from HypeMarket.forms import *
+from datetime import datetime as time
 
 def checkPassword(form,request):
     if form.cleaned_data['password'] != form.cleaned_data['confermaPassword']:

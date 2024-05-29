@@ -5,28 +5,35 @@
     <link rel="stylesheet" href="{% static '/css/prodotto.css' %}">
 {% endblock %}
 
-{% block title %}{{ titolo }}{% endblock %}
+{% block title %}{{ prodotto.titolo }}{% endblock %}
 
 {% block content %}
 {{block.super}}
     <div class="container d-flex align-items-center" style="min-height: 90vh;">
         <div class="row">
-            <div class="col-12 col-lg-6 ">
-                <div class='row'>
-                    <div class="col-12 text-left" style="white-space: nowrap;">
-                        <br>
-                        <h3>{{ titolo }}</h3>
+            <div class="col-lg-6 v-100">
+                <div class='row '>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-dark" onclick="window.location.href='/sneakers/home'"><i class="bi bi-arrow-left"></i> Indietro</button>
                     </div>
-                </div>
-                <div class='row'>
-                    <div class="col-12 text-center">
-                        <img style='width:115%;'src="{{ immagine }}">
+                    <div class="col-12 text-left flex-grow-1" style="white-space: nowrap;">
+                        <br>
+                        <h3>{{ prodotto.titolo }}</h3>
+                    </div>
+                    <div class="col-12 text-center flex-grow-1">
+                        <img style='width:115%;'src="{{ prodotto.immagine }}">
+                    </div>
+                    <div class="infos col-12 text-left">
+                        <h4> Dettagli del prodotto: </h4>
+                        <br>
+                        <p> <b>Modello:</b> {{ prodotto.idModello }} </p>
+                        <p> <b>Data di uscita:</b> {{ prodotto.dataRilascio }} </p>
                     </div>
                 </div>
             </div>
             <div class='col-lg-1'>
             </div>
-            <div class="info col-12 col-lg-5">
+            <div class="info col-lg-5">
                 <div class='row'>
                     <div class="col-1"></div>
                     <div class='col-10'>
@@ -51,24 +58,37 @@
                             {% for taglia in taglie %}
                                 <input type="checkbox" class="btn-check" id="{{taglia}}" autocomplete="off">
                                 <label class=" col-2 m-1 btn btn-outline-dark d-flex justify-content-center" for="{{taglia}}">
-                                    {{ taglia }}<br>
-                                    {% if taglia.propostaMinore != None %}
-                                        {{ taglia.propostaMinore }} €
-                                    {% else %}
-                                        ---
-                                    {% endif %}
-
+                                    <div class='row'>
+                                        <div class='col-12'>
+                                            {{ taglia }}
+                                        </div>
+                                        <div class='col-12'>
+                                            {% if taglia.propostaMinore != None %}
+                                                <div class="propostaMinore">{{ taglia.propostaMinore }} €</div>
+                                            {% else %}
+                                            <div class="propostaMinore"> --- </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class='col-12'>
+                                            {% if taglia.offertaMaggiore != None %}
+                                                <p class="offertaMaggiore">{{ taglia.offertaMaggiore }} €</p>
+                                            {% else %}
+                                            <div class="offertaMaggiore"> --- </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </label>
                             {% endfor %}
                         </div>
                     </div>
                     <br>
                     <div class='row'>
-                        <div class='col-1'></div>
-                        <div class="col-10 text-center">
-                            <button type="button" id="acquista" class="btn btn-dark w-100 disabled">Acquista ora</button>
+                        <div class="col-6 text-center">
+                            <button type="button" id="vendi" class="btn btn-danger w-100 disabled">Vendi ora</button>
                         </div>
-                        <div class='col-1'></div>
+                        <div class="col-6 text-center">
+                            <button type="button" id="acquista" class="btn btn-success w-100 disabled">Acquista ora</button>
+                        </div>
                     </div>
                     <br>
                 </div>
@@ -78,32 +98,45 @@
 {% endblock %}
 {% block script%}
 <script>
-
-    $('input[type="checkbox"]').on('change', function() {
-        $('input[type="checkbox"]').not(this).prop('checked', false);
-        if ($(this).is(':checked')) {
-            $('.btn-dark').removeClass('disabled');
-        } else {
-            $('.btn-dark').addClass('disabled');
-        }
-    });
-
-
-    $('#offri').on('click', function() {
-        var taglia = $('input[type="checkbox"]:checked').attr('id');
-        var prodotto = '{{ idModello}}'
-        if (taglia) {
-            window.location.href = '/sneakers/'+prodotto+'/offerta?taglia=' + taglia;
-        }
-    });
-
-
-    $('#proponi').on('click', function() {
-        var taglia = $('input[type="checkbox"]:checked').attr('id');
-        var prodotto = '{{ idModello}}'
-        if (taglia) {
-            window.location.href = '/sneakers/'+prodotto+'/proposta?taglia=' + taglia;
-        }
+    $(document).ready(function() {
+        $('input[type="checkbox"]').on('change', function() {
+            $('input[type="checkbox"]').not(this).prop('checked', false);
+            if ($(this).is(':checked')) {
+                $('#vendi,#acquista,#proponi,#offri ').removeClass('disabled');
+            } else {
+                $('#vendi,#acquista,#proponi,#offri').addClass('disabled');
+            }
+        });
+    
+    
+        $('#offri').on('click', function() {
+            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+            var prodotto = '{{ prodotto.idModello}}'
+            if (taglia) {
+                //window.location.href = '/gestione/offerta/'+prodotto+'?taglia=' + taglia;
+            }
+        });
+    
+    
+        $('#proponi').on('click', function() {
+            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+            var prodotto = '{{ prodotto.idModello}}'
+            if (taglia) {
+                //window.location.href = '/gestione/proposta/'+prodotto+'?taglia=' + taglia;
+            }
+        });
+    
+        $('#vendi').on('click', function() {
+            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+            var prodotto = '{{ prodotto.idModello}}'
+            var offerta = $('input[type="checkbox"]:checked').next().children().children().last().text().trim();
+            if (taglia && (offerta != '---')) {
+                window.location.href = '/gestione/vendita/'+prodotto+'?taglia=' + taglia;
+            }else
+            {
+                alert('Non ci sono offerte valide per questa taglia');
+            }
+        });
     });
 </script>
 {%endblock%}

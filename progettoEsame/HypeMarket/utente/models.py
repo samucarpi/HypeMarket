@@ -2,7 +2,6 @@ from django.db import models
 from prodotto.models import *
 from django.contrib.auth.models import AbstractUser
 from django_countries.fields import CountryField
-from datetime import datetime as time
 
 class Utente(AbstractUser):
     username=models.CharField(max_length=25,unique=True)
@@ -53,17 +52,3 @@ class CartaCredito(models.Model):
 class Wishlist(models.Model):
     utente=models.ForeignKey(Utente,related_name='wishlist', on_delete=models.CASCADE)
     products = models.ManyToManyField(Prodotto)
-
-class Offerta(models.Model):
-    utente=models.ForeignKey(Utente,related_name='offerte', on_delete=models.CASCADE)
-    prodotto=models.ForeignKey(Prodotto,related_name='offerte', on_delete=models.CASCADE)
-    taglia=models.ForeignKey(Taglia,related_name='offerte', on_delete=models.CASCADE)
-    prezzo=models.FloatField()
-    data=models.DateField()
-
-class Proposta(models.Model):
-    utente=models.ForeignKey(Utente,related_name='proposte', on_delete=models.CASCADE)
-    prodotto=models.ForeignKey(Prodotto,related_name='proposte', on_delete=models.CASCADE)
-    taglia=models.ForeignKey(Taglia,related_name='proposte', on_delete=models.CASCADE)
-    prezzo=models.FloatField()
-    data=models.DateField()

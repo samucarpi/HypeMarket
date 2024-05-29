@@ -1,10 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import *
 from utente.models import *
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from utente.form import *
-from django.contrib.auth.decorators import login_required
+from HypeMarket.forms import *
 
 def home(request):
     pagina=request.GET.get('p')
@@ -45,66 +44,7 @@ def prodotto(request,idModello):
             Taglia.save(taglia)
     
     ctx = { 
-        "titolo":Prodotto.objects.get(idModello=idModello).titolo,
-        "immagine":Prodotto.objects.get(idModello=idModello).immagine,
-        "idModello":Prodotto.objects.get(idModello=idModello).idModello,
-        "dataRilascio":Prodotto.objects.get(idModello=idModello).dataRilascio,
+        "prodotto":Prodotto.objects.get(idModello=idModello),
         "taglie":Taglia.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello))
     }
     return render(request,template_name=templ,context=ctx)
-
-def checkTaglia(request,prodotto):
-    for t in Taglia.objects.filter(prodotto=prodotto):
-        if t.taglia == request.GET.get('taglia'):
-            return t
-    return None
-
-def checkOfferta(form,request):
-    if form.cleaned_data['prezzo'] < 0:
-        messages.error(request,'Prezzo non valido')
-        return False
-    return True
-
-@login_required(login_url='utente:Login')
-def offerta(request,idModello):
-    templ = "utente/modifica.html"
-    prodotto = Prodotto.objects.get(idModello=idModello)
-    utente = request.user
-    url='http://localhost:8000/sneakers/'+str(idModello)
-    taglia=checkTaglia(request,prodotto)
-    if taglia != None:
-        offertaMaggiore = Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').last()
-        if request.method == 'POST':
-            form = OffertaForm(request.POST)
-            if form.is_valid() and checkOfferta(form,request):
-                if Offerta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).exists():
-                    Offerta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).delete()
-                form.save(user=utente,prodotto=prodotto,taglia=taglia)
-                return redirect(url)
-            else:
-                return render(request,template_name=templ,context={'form':form,'url':url,'offerta':True,'offertaMaggiore':offertaMaggiore})
-        else:
-            form = OffertaForm()
-            return render(request,template_name=templ,context={'form':form,'url':url,'offerta':True,'offertaMaggiore':offertaMaggiore})
-
-@login_required(login_url='utente:Login')
-def proposta(request,idModello):
-    templ = "utente/modifica.html"
-    prodotto = Prodotto.objects.get(idModello=idModello)
-    utente = request.user
-    url='http://localhost:8000/sneakers/'+str(idModello)
-    taglia=checkTaglia(request,prodotto)
-    if taglia != None:
-        propostaMinore = Proposta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').first()
-        if request.method == 'POST':
-            form = PropostaForm(request.POST)
-            if form.is_valid() and checkOfferta(form,request):
-                if Proposta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).exists():
-                    Proposta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).delete()
-                form.save(user=utente,prodotto=prodotto,taglia=taglia)
-                return redirect(url)
-            else:
-                return render(request,template_name=templ,context={'form':form,'url':url,'proposta':True,'propostaMinore':propostaMinore})
-        else:
-            form = PropostaForm()
-            return render(request,template_name=templ,context={'form':form,'url':url,'proposta':True,'propostaMinore':propostaMinore})

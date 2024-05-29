@@ -1,10 +1,10 @@
-from typing import Any
 from django import forms
-from .models import *
-from django.contrib import messages
+from utente.models import *
+from prodotto.models import *
+from gestione.models import *
 from crispy_forms.helper import FormHelper 
-from crispy_forms.layout import Submit, Field, Div, Layout
-
+from crispy_forms.layout import Submit, Field, Layout
+from datetime import datetime as time
 
 class Registrazione(forms.ModelForm):
     class Meta:
@@ -260,3 +260,29 @@ class PropostaForm(forms.ModelForm):
         if commit:
             proposta.save()
         return proposta
+
+class VenditaForm(forms.ModelForm):
+    class Meta:
+        model = Vendita
+        fields = []
+
+    def __init__(self, *args, **kwargs):
+        super(VenditaForm, self).__init__(*args, **kwargs)
+        helper = FormHelper()
+        helper.form_id = 'form-vendita'
+        helper.form_method = 'POST'
+        helper.layout = Layout(
+            Submit('submit', 'Vendi', css_class='btn btn-primary'),
+        )
+    
+    def save(self, commit=True, user=None, prodotto=None, taglia=None, prezzo=None):
+        vendita = super().save(commit=False)
+        if user:
+            vendita.taglia = taglia
+            vendita.utente = user
+            vendita.prodotto = prodotto
+            vendita.data=time.now().date()
+            vendita.prezzo=prezzo
+        if commit:
+            vendita.save()
+        return vendita
