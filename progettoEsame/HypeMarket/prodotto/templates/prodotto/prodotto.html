@@ -95,6 +95,14 @@
             </div>
         </div>
     </div>
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error'%}
+                <div hidden id='error'>errore</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
 {% endblock %}
 {% block script%}
 <script>
@@ -141,6 +149,14 @@
                 });
             }
         });
+        error = $('#error').text();
+        if (error == 'errore') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Attenzione',
+                text: 'Impossibile acquistare il prodotto, l\'offerta più alta è la tua',
+            });
+        }
     });
 </script>
 {%endblock%}

@@ -16,17 +16,29 @@
             <div class='col-lg-8'>
                 <div class='row'>
                     <div class='col-12 text-center'>
-                        <h2>Riepilogo della vendita</h2>
+                        <h2>Riepilogo</h2>
+                        <br>
                         <h5>{{ prodotto.titolo }}</h5>
                         <img src="{{ prodotto.immagine }}">
                         <h6>Taglia: {{ taglia }}</h6>
                         <h6>ID: {{ prodotto.idModello }}€</h6>
-                        <h4><b>PAYOUT: {{ prezzo }} €</b></h4>
+                        <h4><b>
+                            {% if vendita or proposta%}
+                            PAYOUT: 
+                            {% else %}
+                            PREZZO:
+                            {% endif %} 
+                            {{ prezzo }} €
+                        </b></h4>
                     </div>
                     <div class='row mt-4'>
                         <div class='col-5'>
                             <div class='col-12 text-center mb-4'>
-                                <h4>Indirizzo di fatturazione</h4>
+                                {% if vendita or proposta%}
+                                    <h4>Indirizzo di fatturazione</h4>
+                                {% else %}
+                                    <h4>Indirizzo di spedizione</h4>
+                                {% endif %}
                             </div>
                             <div class='row'>
                                 <div class='col-6 text-left'>
@@ -54,28 +66,63 @@
                         <div class='col-2'></div>
                         <div class='col-5'>
                             <div class='col-12 text-center mb-4'>
-                                <h4>Coordinate del conto</h4>
+                                {% if vendita or proposta%}
+                                    <h4>Coordinate bancarie</h4>
+                                {% else %}
+                                    <h4>Carta di pagamento</h4>
+                                {% endif %}
                             </div>
                             <div class='row'>
                                 <div class='col-6 text-left'>
-                                    <p><b> Nome </b> </p>
-                                    <p><b> Cognome </b> </p>
-                                    <p><b> IBAN </b> </p>
-                                    <p><b> Banca </b> </p>
+                                    {% if vendita or proposta %}
+                                        <p><b> Nome </b> </p>
+                                        <p><b> Cognome </b> </p>
+                                        <p><b> IBAN </b> </p>
+                                        <p><b> Banca </b> </p>
+                                    {% else %}
+                                        <p><b> Nome </b> </p>
+                                        <p><b> Cognome </b> </p>
+                                        <p><b> Numero </b> </p>
+                                        <p><b> Scadenza </b> </p>
+                                        <p><b> CVV </b> </p>
+                                    {% endif %}
                                 </div>
                                 <div class='col-6 text-left'>
-                                    <p> {{ banca.nome }} </p>
-                                    <p> {{ banca.cognome }}</p>
-                                    <p> {{ banca.iban }}</p>
-                                    <p> {{ banca.banca }}</p>
+                                    {% if vendita or proposta %}
+                                        <p> {{ banca.nome }} </p>
+                                        <p> {{ banca.cognome }}</p>
+                                        <p> {{ banca.iban }}</p>
+                                        <p> {{ banca.banca }}</p>
+                                    {% else %}
+                                        <p> {{ carta.nome }} </p>
+                                        <p> {{ carta.cognome }}</p>
+                                        <p> {{ carta.numero }}</p>
+                                        <p> {{ carta.scadenzaMese }} / {{ carta.scadenzaAnno }}</p>
+                                        <p> {{ carta.cvv }}</p>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class='col-12 text-center'>
+                        {%if vendita %}
+                            <h5> !!! IMPORTANTE !!! </h5>
+                            <h6> ** È NECESSARIO SPEDIRE IL PRODOTTO ENTRO 3 GIORNI LAVORATIVI **</h6>
+                        {%else%}
+                            <h6> ** ARRIVO STIMATO 5-10 GIORNI LAVORATIVI **</h6>
+                        {%endif%}
+                    </div>
+                        
+                    <div class='col-12 text-center'>
                         <form method='post'> {% csrf_token %}
                             {{form|crispy}}
-                            <button type="submit" class="btn btn-dark w-25" id="conferma">Conferma</button>
+                            <button type="submit" class="btn btn-dark w-25" id="conferma">
+                                {%if vendita%}
+                                    VENDI
+                                {%else%}
+                                    ACQUISTA
+                                {%endif%}
+                            </button>
                         </form>
                     </div>
                 </div>

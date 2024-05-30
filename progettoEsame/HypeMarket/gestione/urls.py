@@ -7,3 +7,4 @@ urlpatterns = [
     path('proposta/<str:idModello>', proposta, name='Proposta'),
     path('vendita/<str:idModello>', vendita, name='Vendita'),
 ]
+

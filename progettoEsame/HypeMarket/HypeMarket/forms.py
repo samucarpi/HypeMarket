@@ -221,13 +221,15 @@ class OffertaForm(forms.ModelForm):
             Submit('submit', 'Registrati', css_class='btn btn-primary'),
         )
     
-    def save(self, commit=True, user=None, prodotto=None, taglia=None):
+    def save(self, commit=True, user=None, prodotto=None, taglia=None, indirizzo=None, carta=None):
         offerta = super().save(commit=False)
         if user:
             offerta.taglia = taglia
             offerta.utente = user
             offerta.prodotto = prodotto
-            offerta.data=time.now().date()
+            offerta.data = time.now().date()
+            offerta.IndirizzoSpedizione = indirizzo
+            offerta.carta = carta
         if commit:
             offerta.save()
         return offerta
