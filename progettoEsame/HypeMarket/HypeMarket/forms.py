@@ -275,7 +275,7 @@ class VenditaForm(forms.ModelForm):
             Submit('submit', 'Vendi', css_class='btn btn-primary'),
         )
     
-    def save(self, commit=True, user=None, prodotto=None, taglia=None, prezzo=None):
+    def save(self, commit=True, user=None, prodotto=None, taglia=None, prezzo=None, indirizzo=None, banca=None):
         vendita = super().save(commit=False)
         if user:
             vendita.taglia = taglia
@@ -283,6 +283,8 @@ class VenditaForm(forms.ModelForm):
             vendita.prodotto = prodotto
             vendita.data=time.now().date()
             vendita.prezzo=prezzo
+            vendita.indirizzoFatturazione= indirizzo
+            vendita.banca= banca
         if commit:
             vendita.save()
         return vendita

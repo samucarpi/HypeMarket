@@ -34,9 +34,12 @@ def prodotto(request,idModello):
     templ = "prodotto/prodotto.html"
 
     for taglia in Taglia.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello)):
+        taglia.propostaMinore = None
+        taglia.offertaMaggiore = None
+        Taglia.save(taglia)
         if Proposta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').first():
-            proposta = Proposta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').first()
-            taglia.propostaMinore = proposta.prezzo
+            proposta = Proposta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').first().prezzo
+            taglia.propostaMinore = proposta
             Taglia.save(taglia)
         if Offerta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').last():
             offerta = Offerta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').last().prezzo

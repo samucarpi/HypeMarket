@@ -28,12 +28,13 @@ body {
 
 .propostaMinore{
     font-weight: 500;
-    color: rgb(220, 83, 83);
+    color: rgb(115, 220, 83);
+    
 }
 
 .offertaMaggiore{
     font-weight: 500;
-    color: rgb(115, 220, 83);
+    color: rgb(220, 83, 83);
 }
 
 .infos{

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
+    {% load crispy_forms_tags %}
     {% load static %}
     <link rel="stylesheet" href="{% static '/css/vendita.css' %}">
 {% endblock %}
@@ -11,57 +12,75 @@
 {{block.super}}
     <div class='container' style='white-space: nowrap;'>
         <div class='row'> 
-            <div class='col-lg-3'></div>
-            <div class='col-lg-6'>
+            <div class='col-lg-2'></div>
+            <div class='col-lg-8'>
                 <div class='row'>
                     <div class='col-12 text-center'>
                         <h2>Riepilogo della vendita</h2>
-                    </div>
-                    <div class='col-12 text-center'>
-                        <h4>Prodotto</h4>
-                    </div>
-                    <div class='col-12 text-center'>
                         <h5>{{ prodotto.titolo }}</h5>
-                    </div>
-                    <div class='col-12 text-center'>
                         <img src="{{ prodotto.immagine }}">
-                    </div>
-                    <div class='col-12'>
+                        <h6>Taglia: {{ taglia }}</h6>
                         <h6>ID: {{ prodotto.idModello }}€</h6>
+                        <h4><b>PAYOUT: {{ prezzo }} €</b></h4>
                     </div>
-                    <div class='col-12'>
-                        <h6>Data di rilascio: {{ prodotto.dataRilascio }}</h6>
+                    <div class='row mt-4'>
+                        <div class='col-5'>
+                            <div class='col-12 text-center mb-4'>
+                                <h4>Indirizzo di fatturazione</h4>
+                            </div>
+                            <div class='row'>
+                                <div class='col-6 text-left'>
+                                    <p><b> Nome </b> </p>
+                                    <p><b> Cognome </b> </p>
+                                    <p><b> Via </b> </p>
+                                    <p><b> Città </b> </p>
+                                    <p><b> CAP </b> </p>
+                                    <p><b> Provincia </b> </p>
+                                    <p><b> Nazione </b> </p>
+                                    <p><b> Telefono </b> </p>
+                                </div>
+                                <div class='col-6 text-left'>
+                                    <p> {{ indirizzo.nome }}</p>
+                                    <p> {{ indirizzo.cognome }}</p>
+                                    <p> {{ indirizzo.via }}</p>
+                                    <p> {{ indirizzo.citta }}</p>
+                                    <p> {{ indirizzo.cap }}</p>
+                                    <p> {{ indirizzo.provincia }}</p>
+                                    <p> {{ indirizzo.nazione }}</p>
+                                    <p> {{ indirizzo.telefono }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-2'></div>
+                        <div class='col-5'>
+                            <div class='col-12 text-center mb-4'>
+                                <h4>Coordinate del conto</h4>
+                            </div>
+                            <div class='row'>
+                                <div class='col-6 text-left'>
+                                    <p><b> Nome </b> </p>
+                                    <p><b> Cognome </b> </p>
+                                    <p><b> IBAN </b> </p>
+                                    <p><b> Banca </b> </p>
+                                </div>
+                                <div class='col-6 text-left'>
+                                    <p> {{ banca.nome }} </p>
+                                    <p> {{ banca.cognome }}</p>
+                                    <p> {{ banca.iban }}</p>
+                                    <p> {{ banca.banca }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class='col-12 text-center'>
-                        <h4>Indirizzo di fatturazione</h4>
-                    </div>
-                    <div class='row'>
-                        <div class='col-2'></div>
-                        <div class='col-4 text-left'>
-                            <p><b> Nome </b> </p>
-                            <p><b> Cognome </b> </p>
-                            <p><b> Via </b> </p>
-                            <p><b> Città </b> </p>
-                            <p><b> CAP </b> </p>
-                            <p><b> Provincia </b> </p>
-                            <p><b> Nazione </b> </p>
-                            <p><b> Telefono </b> </p>
-                        </div>
-                        <div class='col-4 text-left'>
-                            <p> {{ indirizzo.nome }}</p>
-                            <p> {{ indirizzo.cognome }}</p>
-                            <p> {{ indirizzo.via }}</p>
-                            <p> {{ indirizzo.citta }}</p>
-                            <p> {{ indirizzo.cap }}</p>
-                            <p> {{ indirizzo.provincia }}</p>
-                            <p> {{ indirizzo.nazione }}</p>
-                            <p> {{ indirizzo.telefono }}</p>
-                        </div>
-                        <div class='col-2'></div>
+                        <form method='post'> {% csrf_token %}
+                            {{form|crispy}}
+                            <button type="submit" class="btn btn-dark w-25" id="conferma">Conferma</button>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class='col-lg-3'></div>
+            <div class='col-lg-2'></div>
         </div>
     </div>
 {% endblock %}

@@ -113,7 +113,7 @@
             var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
             var prodotto = '{{ prodotto.idModello}}'
             if (taglia) {
-                //window.location.href = '/gestione/offerta/'+prodotto+'?taglia=' + taglia;
+                window.location.href = '/gestione/offerta/'+prodotto+'?taglia=' + taglia;
             }
         });
     
@@ -122,7 +122,7 @@
             var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
             var prodotto = '{{ prodotto.idModello}}'
             if (taglia) {
-                //window.location.href = '/gestione/proposta/'+prodotto+'?taglia=' + taglia;
+                window.location.href = '/gestione/proposta/'+prodotto+'?taglia=' + taglia;
             }
         });
     
@@ -134,7 +134,11 @@
                 window.location.href = '/gestione/vendita/'+prodotto+'?taglia=' + taglia;
             }else
             {
-                alert('Non ci sono offerte valide per questa taglia');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Attenzione',
+                    text: 'Non ci sono offerte valide per questa taglia',
+                });
             }
         });
     });

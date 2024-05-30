@@ -86,7 +86,10 @@ def vendita(request,idModello):
                 'prezzo':prezzo
             }
             if form.is_valid():
-                form.save(user=utente,prodotto=prodotto,taglia=taglia,prezzo=prezzo)
+                form.save(user=utente,prodotto=prodotto,taglia=taglia,prezzo=prezzo,indirizzo=indirizzo,banca=banca)
+                Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').last().delete()
+                taglia.offertaMaggiore
+                taglia.save()
                 return redirect(url)
             else:
                 return render(request,template_name=templ,context=ctx)
