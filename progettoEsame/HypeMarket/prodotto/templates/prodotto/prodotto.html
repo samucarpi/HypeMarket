@@ -64,14 +64,14 @@
                                         </div>
                                         <div class='col-12'>
                                             {% if taglia.propostaMinore != None %}
-                                                <div class='propostaMinore'>{{ taglia.propostaMinore }} €</div>
+                                                <div class='propostaMinore'>{{ taglia.propostaMinore.prezzo }} €</div>
                                             {% else %}
                                             <div class='propostaMinore'> --- </div>
                                             {% endif %}
                                         </div>
                                         <div class='col-12'>
                                             {% if taglia.offertaMaggiore != None %}
-                                                <p class='offertaMaggiore'>{{ taglia.offertaMaggiore }} €</p>
+                                                <p class='offertaMaggiore'>{{ taglia.offertaMaggiore.prezzo }} €</p>
                                             {% else %}
                                             <div class='offertaMaggiore'> --- </div>
                                             {% endif %}
@@ -204,7 +204,7 @@
                 var prodotto = '{{ prodotto.idModello}}'
                 var proposta = $('input[type="checkbox"]:checked').next().children().children().first().next().text().trim();
                 if (taglia && (proposta != '---')) {
-                    window.location.href = '/gestione/vendita/'+prodotto+'?taglia=' + taglia;
+                    window.location.href = '/gestione/acquisto/'+prodotto+'?taglia=' + taglia;
                 }else
                 {
                     Swal.fire({

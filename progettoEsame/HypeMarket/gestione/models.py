@@ -1,6 +1,6 @@
 from django.db import models
-from utente.models import *
-from prodotto.models import *
+from utente.models import Utente,IndirizzoFatturazione,IndirizzoSpedizione,CartaCredito,DatiBancari
+from prodotto.models import Prodotto,Taglia
 
 class CompraVendita(models.Model):
     utente=models.ForeignKey(Utente,related_name='mercato', on_delete=models.CASCADE)

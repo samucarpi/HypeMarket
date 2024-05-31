@@ -29,20 +29,22 @@
                         <h5>{{ prodotto.titolo }}</h5>
                         <img src='{{ prodotto.immagine }}'>
                         <h6>Taglia: {{ taglia.taglia }}</h6>
-                        <h6>ID: {{ prodotto.idModello }}€</h6>
+                        <h6>ID: {{ prodotto.idModello }}</h6>
                         <br>
                         <h4><b>
                             {% if vendita %}
-                                PAYOUT: 
+                                PAYOUT: {{taglia.offertaMaggiore.prezzo}} €
+                            {% elif acquisto %}
+                                PREZZO: {{taglia.propostaMinore.prezzo}} €
                             {% elif offerta %}
-                                {% if taglia.offertaMaggiore != 'None'%}
-                                    OFFERTA PIÙ ALTA: {{taglia.offertaMaggiore}} €
+                                {% if taglia.offertaMaggiore != None%}
+                                    OFFERTA PIÙ ALTA: {{taglia.offertaMaggiore.prezzo}} €
                                 {% else %}
                                     NON È PRESENTE ALCUNA OFFERTA
                                 {% endif %}
                             {% elif proposta %}
-                                {% if taglia.propostaMinore != 'None'%}
-                                    PROPOSTA PIÙ BASSA: {{taglia.propostaMinore}} €
+                                {% if taglia.propostaMinore != None%}
+                                    PROPOSTA PIÙ BASSA: {{taglia.propostaMinore.prezzo}} €
                                 {% else %}
                                     NON È PRESENTE ALCUNA PROPOSTA
                                 {% endif %}
@@ -143,6 +145,8 @@
                             <button type='submit' class='pulsanti btn btn-dark w-25'>
                                 {%if vendita%}
                                     VENDI
+                                {%elif acquisto%}
+                                    ACQUISTA
                                 {%elif offerta%}
                                     OFFRI
                                 {%elif proposta%}

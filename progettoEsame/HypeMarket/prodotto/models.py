@@ -9,5 +9,5 @@ class Prodotto(models.Model):
 class Taglia(models.Model):
     prodotto=models.ForeignKey(Prodotto,related_name='taglie', on_delete=models.CASCADE)
     taglia=models.CharField(max_length=5)
-    propostaMinore=models.IntegerField(null=True,blank=True)
-    offertaMaggiore=models.IntegerField(null=True,blank=True)
+    propostaMinore=models.ForeignKey('gestione.Proposta',related_name='taglie', on_delete=models.SET_NULL,blank=True,null=True)
+    offertaMaggiore=models.ForeignKey('gestione.Offerta',related_name='taglie', on_delete=models.SET_NULL,blank=True,null=True)

@@ -114,16 +114,15 @@ def vendita(request,idModello):
         return redirect(url)
 
     if taglia != None:
-        offertaRiferimento = taglia.offertaMaggiore
         if IndirizzoFatturazione.objects.filter(utente=utente).exists():
-            indirizzo = IndirizzoFatturazione.objects.filter(utente=utente).first()
+            indirizzoFatturazione = IndirizzoFatturazione.objects.filter(utente=utente).first()
             if DatiBancari.objects.filter(utente=utente).exists():
                 banca = DatiBancari.objects.filter(utente=utente).first()
                 ctx={
                     'form':VenditaForm(),
                     'prodotto':prodotto,
                     'taglia':taglia,
-                    'indirizzo':indirizzo,
+                    'indirizzo':indirizzoFatturazione,
                     'banca':banca,
                     'vendita':True
                 }
@@ -131,13 +130,15 @@ def vendita(request,idModello):
                     form = VenditaForm(request.POST)
                     ctx['form']=form
                     if form.is_valid():
-                        form.save(utente=utente,prodotto=prodotto,taglia=taglia,prezzo=offertaRiferimento,indirizzoFatturazione=indirizzo,banca=banca)
-                        acquirente = Offerta.objects.filter(prodotto=prodotto,taglia=taglia,prezzo=offertaRiferimento).first()
-                        acquirenteIndirizzo = acquirente.indirizzoSpedizione
-                        carta = acquirente.carta
+                        offertaRiferimento= taglia.offertaMaggiore
+                        prezzo = offertaRiferimento.prezzo
+                        form.save(utente=utente,prodotto=prodotto,taglia=taglia,prezzo=prezzo,indirizzoFatturazione=indirizzoFatturazione,banca=banca)
+                        acquirente = offertaRiferimento.utente
+                        indirizzoSpedizione = offertaRiferimento.indirizzoSpedizione
+                        carta = offertaRiferimento.carta
                         data = time.now().date()
-                        acquisto = Acquisto(utente=acquirente.utente,prodotto=prodotto,taglia=taglia,prezzo=offertaRiferimento,indirizzoSpedizione=acquirenteIndirizzo,carta=carta,data=data)
-                        Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').last().delete()
+                        acquisto = Acquisto(utente=acquirente,prodotto=prodotto,taglia=taglia,prezzo=prezzo,indirizzoSpedizione=indirizzoSpedizione,carta=carta,data=data)
+                        offertaRiferimento.delete()
                         acquisto.save()
                         return redirect(url)
                     else:
@@ -166,7 +167,6 @@ def acquisto(request,idModello):
         return redirect(url)
 
     if taglia != None:
-        propostaRiferimento = taglia.propostaMinore
         if IndirizzoSpedizione.objects.filter(utente=utente).exists():
             indirizzo = IndirizzoSpedizione.objects.filter(utente=utente).first()
             if CartaCredito.objects.filter(utente=utente).exists():
@@ -183,12 +183,14 @@ def acquisto(request,idModello):
                     form = AcquistoForm(request.POST)
                     ctx['form']=form
                     if form.is_valid():
-                        form.save(utente=utente,prodotto=prodotto,taglia=taglia,prezzo=propostaRiferimento,indirizzoSpedizione=indirizzo,banca=banca)
-                        acquirente = Proposta.objects.filter(prodotto=prodotto,taglia=taglia,prezzo=propostaRiferimento).first()
-                        acquirenteIndirizzo = acquirente.indirizzoFatturazione
-                        banca = acquirente.banca
+                        propostaRiferimento= taglia.propostaMinore
+                        prezzo = propostaRiferimento.prezzo
+                        form.save(utente=utente,prodotto=prodotto,taglia=taglia,prezzo=prezzo,indirizzoSpedizione=indirizzo,carta=carta)
+                        venditore = propostaRiferimento.utente
+                        indirizzoFatturazione = propostaRiferimento.indirizzoFatturazione
+                        banca = propostaRiferimento.banca
                         data = time.now().date()
-                        acquisto = Acquisto(utente=acquirente.utente,prodotto=prodotto,taglia=taglia,prezzo=propostaRiferimento,indirizzoFatturazione=acquirenteIndirizzo,carta=carta,data=data)
+                        acquisto = Vendita(utente=venditore,prodotto=prodotto,taglia=taglia,prezzo=prezzo,indirizzoFatturazione=indirizzoFatturazione,banca=banca,data=data)
                         Proposta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').first().delete()
                         acquisto.save()
                         return redirect(url)
