@@ -79,14 +79,14 @@ class Informazioni(forms.ModelForm):
             Submit('submit', 'Modifica', css_class='btn btn-primary'),
         )
 
-    def save(self, commit=True, user=None):
+    def save(self, commit=True, utente=None):
         informazioni = super().save(commit=False)
-        if user:
-            user.dataNascita = informazioni.dataNascita
-            user.pIva = informazioni.pIva
+        if utente:
+            utente.dataNascita = informazioni.dataNascita
+            utente.pIva = informazioni.pIva
         if commit:
-            user.save()
-        return user
+            utente.save()
+        return utente
 
 class Indirizzo(forms.ModelForm):
 
@@ -97,7 +97,7 @@ class Indirizzo(forms.ModelForm):
     cap=forms.CharField(widget=forms.TextInput(), max_length=5)
     provincia=forms.CharField(widget=forms.TextInput(), max_length=2)
     nazione=CountryField().formfield()
-    telefono=forms.CharField(widget=forms.TextInput(attrs={'type':'number'}), max_length=15)
+    telefono=forms.CharField(widget=forms.TextInput(attrs={'type':'number'}), max_length=10)
 
     def __init__(self, *args, **kwargs):
         super(Indirizzo, self).__init__(*args, **kwargs)
@@ -116,10 +116,10 @@ class Indirizzo(forms.ModelForm):
             Submit('submit', 'Registrati', css_class='btn btn-primary'),
         )
     
-    def save(self, commit=True, user=None):
+    def save(self, commit=True, utente=None):
         indirizzo = super().save(commit=False)
-        if user:
-            indirizzo.utente = user
+        if utente:
+            indirizzo.utente = utente
         if commit:
             indirizzo.save()
         return indirizzo
@@ -157,10 +157,10 @@ class Banca(forms.ModelForm):
             Submit('submit', 'Modifica', css_class='btn btn-primary'),
         )
 
-    def save(self, commit=True, user=None):
+    def save(self, commit=True, utente=None):
         banca = super().save(commit=False)
-        if user:
-            banca.utente = user
+        if utente:
+            banca.utente = utente
         if commit:
             banca.save()
         return banca
@@ -195,98 +195,110 @@ class Carta(forms.ModelForm):
             Submit('submit', 'Modifica', css_class='btn btn-primary'),
         )
 
-    def save(self, commit=True, user=None):
+    def save(self, commit=True, utente=None):
         carta = super().save(commit=False)
-        if user:
-            carta.utente = user
+        if utente:
+            carta.utente = utente
         if commit:
             carta.save()
         return carta
-    
-class OffertaForm(forms.ModelForm):
-    
-    class Meta:
-        model = Offerta
-        fields = ['prezzo']
+
+class PropostaOfferta(forms.ModelForm):
 
     prezzo=forms.FloatField(widget=forms.NumberInput())
 
     def __init__(self, *args, **kwargs):
-        super(OffertaForm, self).__init__(*args, **kwargs)
+        super(PropostaOfferta, self).__init__(*args, **kwargs)
         helper = FormHelper()
-        helper.form_id = 'form-offerta'
+        helper.form_id = 'form-propostaofferta'
         helper.form_method = 'POST'
         helper.layout = Layout(
             Field('prezzo', css_class='form-control'),
             Submit('submit', 'Registrati', css_class='btn btn-primary'),
         )
+
+class OffertaForm(PropostaOfferta):
     
-    def save(self, commit=True, user=None, prodotto=None, taglia=None, indirizzo=None, carta=None):
+    class Meta:
+        model = Offerta
+        fields = ['prezzo']
+    
+    def save(self, commit=True, utente=None, prodotto=None, taglia=None, indirizzoSpedizione=None, carta=None):
         offerta = super().save(commit=False)
-        if user:
+        if utente:
             offerta.taglia = taglia
-            offerta.utente = user
+            offerta.utente = utente
             offerta.prodotto = prodotto
             offerta.data = time.now().date()
-            offerta.IndirizzoSpedizione = indirizzo
+            offerta.indirizzoSpedizione = indirizzoSpedizione
             offerta.carta = carta
         if commit:
             offerta.save()
         return offerta
     
-class PropostaForm(forms.ModelForm):
+class PropostaForm(PropostaOfferta):
     
     class Meta:
         model = Proposta
         fields = ['prezzo']
-
-    prezzo=forms.FloatField(widget=forms.NumberInput())
-
-    def __init__(self, *args, **kwargs):
-        super(PropostaForm, self).__init__(*args, **kwargs)
-        helper = FormHelper()
-        helper.form_id = 'form-proposta'
-        helper.form_method = 'POST'
-        helper.layout = Layout(
-            Field('prezzo', css_class='form-control'),
-            Submit('submit', 'Registrati', css_class='btn btn-primary'),
-        )
     
-    def save(self, commit=True, user=None, prodotto=None, taglia=None):
+    def save(self, commit=True, utente=None, prodotto=None, taglia=None, indirizzoFatturazione=None, banca=None):
         proposta = super().save(commit=False)
-        if user:
+        if utente:
             proposta.taglia = taglia
-            proposta.utente = user
+            proposta.utente = utente
             proposta.prodotto = prodotto
             proposta.data=time.now().date()
+            proposta.indirizzoFatturazione= indirizzoFatturazione
+            proposta.banca= banca
         if commit:
             proposta.save()
         return proposta
-
-class VenditaForm(forms.ModelForm):
-    class Meta:
-        model = Vendita
-        fields = []
-
+    
+class AcquistoVendita(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(VenditaForm, self).__init__(*args, **kwargs)
+        super(AcquistoVendita, self).__init__(*args, **kwargs)
         helper = FormHelper()
         helper.form_id = 'form-vendita'
         helper.form_method = 'POST'
         helper.layout = Layout(
             Submit('submit', 'Vendi', css_class='btn btn-primary'),
-        )
+    )
+
+class VenditaForm(AcquistoVendita):
+    class Meta:
+        model = Vendita
+        fields = []
     
-    def save(self, commit=True, user=None, prodotto=None, taglia=None, prezzo=None, indirizzo=None, banca=None):
+    def save(self, commit=True, utente=None, prodotto=None, taglia=None, prezzo=None, indirizzoFatturazione=None, banca=None):
         vendita = super().save(commit=False)
-        if user:
+        if utente:
             vendita.taglia = taglia
-            vendita.utente = user
+            vendita.utente = utente
             vendita.prodotto = prodotto
             vendita.data=time.now().date()
             vendita.prezzo=prezzo
-            vendita.indirizzoFatturazione= indirizzo
+            vendita.indirizzoFatturazione= indirizzoFatturazione
             vendita.banca= banca
         if commit:
             vendita.save()
         return vendita
+    
+class AcquistoForm(AcquistoVendita):
+    class Meta:
+        model = Acquisto
+        fields = []
+    
+    def save(self, commit=True, utente=None, prodotto=None, taglia=None, prezzo=None, indirizzoSpedizione=None, carta=None):
+        acquisto = super().save(commit=False)
+        if utente:
+            acquisto.taglia = taglia
+            acquisto.utente = utente
+            acquisto.prodotto = prodotto
+            acquisto.data=time.now().date()
+            acquisto.prezzo=prezzo
+            acquisto.indirizzoSpedizione= indirizzoSpedizione
+            acquisto.carta= carta
+        if commit:
+            acquisto.save()
+        return acquisto

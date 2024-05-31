@@ -11,8 +11,8 @@ def checkPassword(form,request):
         return False
     return True
 
-def registrazione(request):
-    templ='utente/registrazione.html'
+def registrazioneForm(request):
+    templ='utente/registrazioneLogin.html'
     if request.method == 'POST':
         form = Registrazione(request.POST)
         if form.is_valid() and checkPassword(form,request):
@@ -20,80 +20,80 @@ def registrazione(request):
             messages.success(request, 'Sei stato registrato con successo!')
             return redirect('utente:Login')
         else:
-            return render(request,template_name=templ,context={'form':form})
+            return render(request,template_name=templ,context={'form':form,'login':False})
     else:
         form = Registrazione()
-        return render(request,template_name=templ,context={'form':form})
+        return render(request,template_name=templ,context={'form':form,'login':False})
+
+def checkLogin(form,request):
+    utente = authenticate(request,username=form.cleaned_data['username'],password=form.cleaned_data['password'])
+    if utente is None:
+        return None
+    return utente
 
 def loginForm(request):
-    templ='utente/login.html'
+    templ='utente/registrazioneLogin.html'
     if request.method == 'POST':
         form = Login(request.POST)
         if form.is_valid():
-            username=form.cleaned_data['username']
-            password=form.cleaned_data['password']
-            user = authenticate(request,username=username,password=password)
-            if user is not None:
-                login(request,user)
+            utente = checkLogin(form,request)
+            if utente:
+                login(request,utente)
                 return redirect('utente:Account')
             else:
                 messages.error(request,'Email o password errati')
-                return render(request,template_name=templ,context={'form':form})
+                return redirect('utente:Account')
         else:
             messages.error(request,'Email o password errati')
-            return render(request,template_name=templ,context={'form':form})
+            return render(request,template_name=templ,context={'form':form,'login':True})
     else:
         form = Login()
-        return render(request,template_name=templ,context={'form':form})
+        return render(request,template_name=templ,context={'form':form,'login':True})
     
 def logoutAction(request):
     logout(request)
-    return redirect('prodotto:Home')
+    return redirect('/sneakers/home')
     
 @login_required(login_url='utente:Login')
 def account(request):
     templ='utente/account.html'
-    ctx={}
     utente = request.user
     indirizzoSpedizione,indirizzoFatturazione,banca,carta=None,None,None,None
-    if utente:
-        if IndirizzoSpedizione.objects.filter(utente=utente).exists():
-            for indirizzo in IndirizzoSpedizione.objects.filter(utente=utente):
-                indirizzoSpedizione=indirizzo
-        if IndirizzoFatturazione.objects.filter(utente=utente).exists():
-            for indirizzo in IndirizzoFatturazione.objects.filter(utente=utente):
-                indirizzoFatturazione=indirizzo
-        if DatiBancari.objects.filter(utente=utente).exists():
-            for banca in DatiBancari.objects.filter(utente=utente):
-                banca=banca
-        if CartaCredito.objects.filter(utente=utente).exists():
-            for carta in CartaCredito.objects.filter(utente=utente):
-                carta=carta
-        ctx = {
-            'utente':utente,
-            'indirizzoSpedizione':indirizzoSpedizione,
-            'indirizzoFatturazione':indirizzoFatturazione,
-            'banca':banca,
-            'carta':carta
-        }
+    if IndirizzoSpedizione.objects.filter(utente=utente).exists():
+        indirizzoSpedizione=IndirizzoSpedizione.objects.filter(utente=utente).first()
+    if IndirizzoFatturazione.objects.filter(utente=utente).exists():
+        indirizzoFatturazione=IndirizzoFatturazione.objects.filter(utente=utente).first()
+    if DatiBancari.objects.filter(utente=utente).exists():
+        banca= DatiBancari.objects.filter(utente=utente).first()
+    if CartaCredito.objects.filter(utente=utente).exists():
+        carta=CartaCredito.objects.filter(utente=utente).first()
+    ctx = {
+        'utente':utente,
+        'indirizzoSpedizione':indirizzoSpedizione,
+        'indirizzoFatturazione':indirizzoFatturazione,
+        'banca':banca,
+        'carta':carta
+    }
     return render(request,template_name=templ,context=ctx)
 
-def checkInformazioni(form,request):
-    if form.cleaned_data['dataNascita'] != None:
-        if form.cleaned_data['dataNascita'] > time.now().date():
+def checkData(form,request):
+    data = form.cleaned_data['dataNascita']
+    if data is not None:
+        if  data > time.now().date():
             messages.error(request,'Data di nascita non valida')
             return False
-        if form.cleaned_data['dataNascita'].year < 1900:
+        if data.year < 1900:
             messages.error(request,'Data di nascita non valida')
             return False
-        if time.now().year - form.cleaned_data['dataNascita'].year > 100:
+        if time.now().year - data.year > 100:
             messages.error(request,'Data di nascita non valida')
             return False
-        if time.now().year - form.cleaned_data['dataNascita'].year < 18:
+        if time.now().year - data.year < 18:
             messages.error(request,'È necessario avere almeno 18 anni')
             return False
         return True
-    return True
+    else:
+        return True
 
 @login_required(login_url='utente:Login')
 def modificaInformazioni(request):
@@ -101,8 +101,8 @@ def modificaInformazioni(request):
     utente = request.user
     if request.method == 'POST':
         form = Informazioni(request.POST)
-        if form.is_valid() and checkInformazioni(form,request):
-            form.save(user=utente)
+        if form.is_valid() and checkData(form,request):
+            form.save(utente=utente)
             return redirect('utente:Account')
         else:
             return render(request,template_name=templ,context={'form':form})
@@ -119,7 +119,7 @@ def modificaIndirizzoSpedizione(request):
         if form.is_valid():
             if IndirizzoSpedizione.objects.filter(utente=utente).exists():
                 IndirizzoSpedizione.objects.filter(utente=utente).delete()
-            form.save(user=utente)
+            form.save(utente=utente)
             return redirect('utente:Account')
         else:
             return render(request,template_name=templ,context={'form':form})
@@ -136,7 +136,7 @@ def modificaIndirizzoFatturazione(request):
         if form.is_valid():
             if IndirizzoFatturazione.objects.filter(utente=utente).exists():
                 IndirizzoFatturazione.objects.filter(utente=utente).delete()
-            form.save(user=utente)
+            form.save(utente=utente)
             return redirect('utente:Account')
         else:
             return render(request,template_name=templ,context={'form':form})
@@ -157,7 +157,7 @@ def modificaBanca(request):
     if request.method == 'POST':
         form = Banca(request.POST)
         if form.is_valid() and checkBanca(form,request):
-            form.save(user=utente)
+            form.save(utente=utente)
             return redirect('utente:Account')
         else:
             return render(request,template_name=templ,context={'form':form})
@@ -198,11 +198,39 @@ def modificaCarta(request):
     if request.method == 'POST':
         form = Carta(request.POST)
         if form.is_valid() and checkCarta(form,request):
-            form.save(user=utente)
+            form.save(utente=utente)
             return redirect('utente:Account')
         else:
             return render(request,template_name=templ,context={'form':form})
     else:
         form = Carta()
         return render(request,template_name=templ,context={'form':form})
+
+@login_required(login_url='utente:Login')
+def elimina(request,tipo):
+    utente = request.user
+    if tipo == 'informazioni':
+        if utente.dataNascita is not None:
+            utente.dataNascita = None
+        if utente.pIva is not None:
+            utente.pIva = None
+        utente.save()
+        
+    if tipo == 'indirizzo-spedizione':
+        if IndirizzoSpedizione.objects.filter(utente=utente).exists():
+            IndirizzoSpedizione.objects.filter(utente=utente).delete()
+    elif tipo == 'indirizzo-fatturazione':
+        if IndirizzoFatturazione.objects.filter(utente=utente).exists():
+            IndirizzoFatturazione.objects.filter(utente=utente).delete()
+    elif tipo == 'banca':
+        if DatiBancari.objects.filter(utente=utente).exists():
+            DatiBancari.objects.filter(utente=utente).delete()
+    elif tipo == 'carta':
+        if CartaCredito.objects.filter(utente=utente).exists():
+            CartaCredito.objects.filter(utente=utente).delete()
+    elif tipo == 'account':
+        utente.delete()
+        return redirect('utente:Login')
+    return redirect('utente:Account')
+
     

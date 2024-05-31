@@ -7,7 +7,7 @@ from datetime import datetime
 def erase_db():
     Prodotto.objects.all().delete()
     Taglia.objects.all().delete()
-    print("Database cancellato")
+    print('Database cancellato')
 
 def init_db():
     i=1
@@ -17,12 +17,12 @@ def init_db():
             for prod in scraped:
                 print(i)
                 locale.setlocale(locale.LC_TIME, 'it_IT.UTF-8')
-                data = datetime.strptime(prod['Data'], "%d %B %Y")
+                data = datetime.strptime(prod['Data'], '%d %B %Y')
                 p=Prodotto(titolo=prod['Titolo'], immagine=prod['Immagine'], idModello=prod['Id'], dataRilascio=data)
                 p.save()
                 for t in prod['Taglie']:
                     taglia=Taglia(prodotto=p,taglia=t)
                     taglia.save()
                 i+=1
-    print("Database inizializzato")
+    print('Database inizializzato')
     print(Prodotto.objects.all())

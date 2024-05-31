@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block head %}
+    {% load crispy_forms_tags %}
+    {% load static %}
+    <link rel='stylesheet' href="{% static '/css/form.css' %}">
+{% endblock %}
+{% block title %}
+    {% if 'login'%}
+        Login
+    {% else %}
+        Registrazione
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class='container'>
+        <div class='row'>
+            <div class='col-md-3'>
+            </div>
+            <div class='col-md-6' id='form'>
+                <h2 class='text-center'>
+                    {% if 'login'%}
+                        Login
+                    {% else %}
+                        Registrazione
+                    {% endif %}
+                </h2>
+                <div class='messaggi'>
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class='alert alert-success' role='alert'>
+                                    {{message}}
+                                </div>
+                            {%endif%}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <form method='post'>{% csrf_token %}
+                    {{form|crispy}}
+                    <div class='row mx-auto text-center'>
+                        <div class='col-12'>
+                            <button type='submit' class='btn btn-primary'>
+                                {% if 'login'%}
+                                    Login
+                                {% else %}
+                                    Registrati
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div class='messaggi'>
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'error' %}
+                                <div class='alert alert-danger' role='alert'>
+                                    {{message}}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% if 'login'%}
+                    <p id='domanda'> Non hai un account? <a href="{{'http://localhost:8000/utente/registrazione' }}">Registrati</a></p>
+                {% else %}
+                    <p id='domanda'> Sei già registrato? <a href="{{ 'http://localhost:8000/utente/login' }}">Accedi</a></p>
+                {% endif %}
+            </div>
+            <div class='col-md-3'>
+            </div>
+        </div>
+    </div>
+{% endblock %}

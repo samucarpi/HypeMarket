@@ -10,7 +10,7 @@ class CompraVendita(models.Model):
     data=models.DateField()
 
 class Offerta(CompraVendita):
-    IndirizzoSpedizione=models.ForeignKey(IndirizzoSpedizione,related_name='offerte', on_delete=models.CASCADE)
+    indirizzoSpedizione=models.ForeignKey(IndirizzoSpedizione,related_name='offerte', on_delete=models.CASCADE)
     carta=models.ForeignKey(CartaCredito,related_name='offerte', on_delete=models.CASCADE)
     
 class Proposta(CompraVendita):
@@ -18,7 +18,7 @@ class Proposta(CompraVendita):
     banca=models.ForeignKey(DatiBancari,related_name='proposte', on_delete=models.CASCADE)
 
 class Acquisto(CompraVendita):
-    IndirizzoSpedizione=models.ForeignKey(IndirizzoSpedizione,related_name='acquisti', on_delete=models.CASCADE)
+    indirizzoSpedizione=models.ForeignKey(IndirizzoSpedizione,related_name='acquisti', on_delete=models.CASCADE)
     carta=models.ForeignKey(CartaCredito,related_name='acquisti', on_delete=models.CASCADE)
 
 class Vendita(CompraVendita):

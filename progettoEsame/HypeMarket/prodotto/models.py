@@ -6,16 +6,8 @@ class Prodotto(models.Model):
     idModello=models.CharField(max_length=10)
     dataRilascio=models.DateField()
 
-    def __str__(self):
-        out = self.titolo + " \n " + self.immagine + " \n " + self.idModello + " \n " + self.dataRilascio.strftime("%d %M %Y") + " \n "
-        return out
-
 class Taglia(models.Model):
     prodotto=models.ForeignKey(Prodotto,related_name='taglie', on_delete=models.CASCADE)
     taglia=models.CharField(max_length=5)
-    propostaMinore=models.FloatField(null=True, blank=True)
-    offertaMaggiore=models.FloatField(null=True, blank=True)
-
-    def __str__(self):
-        out = self.taglia + " \n "
-        return out
+    propostaMinore=models.IntegerField(null=True,blank=True)
+    offertaMaggiore=models.IntegerField(null=True,blank=True)

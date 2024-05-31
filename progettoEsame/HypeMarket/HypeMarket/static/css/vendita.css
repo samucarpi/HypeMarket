@@ -1,5 +1,8 @@
-#conferma{
-    margin-top: 40px;
-    padding-top: 15px;
-    padding-bottom: 15px;
+#id_prezzo,#message{
+    width: 35%;
+    margin: auto;
+}
+
+#message{
+    margin-bottom: 15px;
 }

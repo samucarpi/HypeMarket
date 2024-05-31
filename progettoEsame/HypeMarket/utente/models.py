@@ -13,19 +13,19 @@ class Utente(AbstractUser):
     pIva=models.CharField(max_length=11,null=True, blank=True)
 
     class Meta: 
-        verbose_name = "Utente"
-        verbose_name_plural = "Utenti"
+        verbose_name = 'Utente'
+        verbose_name_plural = 'Utenti'
 
 class Indirizzo(models.Model):
     utente=models.ForeignKey(Utente,related_name='indirizzi', on_delete=models.CASCADE)
-    nome=models.CharField(max_length=25,default='Uknown')
-    cognome=models.CharField(max_length=25,default='Uknown')
-    via=models.CharField(max_length=50,default='Uknown')
-    citta=models.CharField(max_length=50,default='Uknown')
-    cap=models.CharField(max_length=5,default='Uknown')
-    provincia=models.CharField(max_length=2,default='Uknown')
+    nome=models.CharField(max_length=25)
+    cognome=models.CharField(max_length=25)
+    via=models.CharField(max_length=50)
+    citta=models.CharField(max_length=50)
+    cap=models.CharField(max_length=5)
+    provincia=models.CharField(max_length=2)
     nazione=CountryField()
-    telefono=models.CharField(max_length=15,default='Uknown')
+    telefono=models.CharField(max_length=15)
 
 class IndirizzoSpedizione(Indirizzo):
     pass
@@ -35,20 +35,20 @@ class IndirizzoFatturazione(Indirizzo):
 
 class DatiBancari(models.Model):
     utente=models.ForeignKey(Utente,related_name='dati', on_delete=models.CASCADE)
-    nome=models.CharField(max_length=25,default='Uknown')
-    cognome=models.CharField(max_length=25,default='Uknown')
-    iban=models.CharField(max_length=27,default='Uknown')
-    banca=models.CharField(max_length=50,default='Uknown')
+    nome=models.CharField(max_length=25)
+    cognome=models.CharField(max_length=25)
+    iban=models.CharField(max_length=27)
+    banca=models.CharField(max_length=50)
 
 class CartaCredito(models.Model):
     utente=models.ForeignKey(Utente,related_name='carte', on_delete=models.CASCADE)
-    nome=models.CharField(max_length=25,default='Uknown')
-    cognome=models.CharField(max_length=25,default='Uknown')
-    numero=models.CharField(max_length=16,default='Uknown')
+    nome=models.CharField(max_length=25)
+    cognome=models.CharField(max_length=25)
+    numero=models.CharField(max_length=16)
     scadenzaMese=models.CharField(max_length=2)
     scadenzaAnno=models.CharField(max_length=4)
-    cvv=models.CharField(max_length=3,default='Uknown')
+    cvv=models.CharField(max_length=3)
 
 class Wishlist(models.Model):
     utente=models.ForeignKey(Utente,related_name='wishlist', on_delete=models.CASCADE)
-    products = models.ManyToManyField(Prodotto)
+    prodotto = models.ManyToManyField(Prodotto)

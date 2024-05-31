@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block head %}
     {% load crispy_forms_tags %}
     {% load static %}
-    <link rel="stylesheet" href="{% static '/css/vendita.css' %}">
+    <link rel='stylesheet' href="{% static '/css/vendita.css' %}">
 {% endblock %}
 
 {% block title %}{{ title }}{% endblock %}
@@ -16,19 +16,37 @@
             <div class='col-lg-8'>
                 <div class='row'>
                     <div class='col-12 text-center'>
-                        <h2>Riepilogo</h2>
+                        <h2>
+                            {% if offerta %}
+                                Offerta
+                            {% elif vendita %}
+                                Vendita
+                            {% elif proposta %}
+                                Proposta
+                            {% endif %}
+                        </h2>
                         <br>
                         <h5>{{ prodotto.titolo }}</h5>
-                        <img src="{{ prodotto.immagine }}">
-                        <h6>Taglia: {{ taglia }}</h6>
+                        <img src='{{ prodotto.immagine }}'>
+                        <h6>Taglia: {{ taglia.taglia }}</h6>
                         <h6>ID: {{ prodotto.idModello }}€</h6>
+                        <br>
                         <h4><b>
-                            {% if vendita or proposta%}
-                            PAYOUT: 
-                            {% else %}
-                            PREZZO:
+                            {% if vendita %}
+                                PAYOUT: 
+                            {% elif offerta %}
+                                {% if taglia.offertaMaggiore != 'None'%}
+                                    OFFERTA PIÙ ALTA: {{taglia.offertaMaggiore}} €
+                                {% else %}
+                                    NON È PRESENTE ALCUNA OFFERTA
+                                {% endif %}
+                            {% elif proposta %}
+                                {% if taglia.propostaMinore != 'None'%}
+                                    PROPOSTA PIÙ BASSA: {{taglia.propostaMinore}} €
+                                {% else %}
+                                    NON È PRESENTE ALCUNA PROPOSTA
+                                {% endif %}
                             {% endif %} 
-                            {{ prezzo }} €
                         </b></h4>
                     </div>
                     <div class='row mt-4'>
@@ -108,7 +126,7 @@
                         {%if vendita %}
                             <h5> !!! IMPORTANTE !!! </h5>
                             <h6> ** È NECESSARIO SPEDIRE IL PRODOTTO ENTRO 3 GIORNI LAVORATIVI **</h6>
-                        {%else%}
+                        {%elif acquisto %}
                             <h6> ** ARRIVO STIMATO 5-10 GIORNI LAVORATIVI **</h6>
                         {%endif%}
                     </div>
@@ -116,11 +134,19 @@
                     <div class='col-12 text-center'>
                         <form method='post'> {% csrf_token %}
                             {{form|crispy}}
-                            <button type="submit" class="btn btn-dark w-25" id="conferma">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class='alert alert-danger' id='message' role='alert'>{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <button type='button' class='pulsanti btn btn-danger w-10' onclick="window.location.href='/sneakers/{{ prodotto.idModello }}'" ><i class="bi bi-arrow-left"></i></button>
+                            <button type='submit' class='pulsanti btn btn-dark w-25'>
                                 {%if vendita%}
                                     VENDI
-                                {%else%}
-                                    ACQUISTA
+                                {%elif offerta%}
+                                    OFFRI
+                                {%elif proposta%}
+                                    PROPONI
                                 {%endif%}
                             </button>
                         </form>

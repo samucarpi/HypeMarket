@@ -1,27 +1,22 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.shortcuts import render
 from .models import *
 from utente.models import *
 from HypeMarket.forms import *
 
 def home(request):
-    pagina=request.GET.get('p')
     try:
-        pagina=int(pagina)
+        pagina=int(request.GET.get('p'))
     except:
         pagina=1
-    selezione_inizo=(pagina-1)*24
-    selezione_fine=pagina*24
-    catalogo=Prodotto.objects.all()[selezione_inizo:selezione_fine]
     paginaMax=int(len(Prodotto.objects.all())/24+1)
-    templ = "prodotto/home.html"
-    utente = request.user
+    selezioneInizo=(pagina-1)*24
+    selezioneFine=pagina*24
+    catalogo=Prodotto.objects.all()[selezioneInizo:selezioneFine]
+
+    templ = 'prodotto/home.html'
     ctx = {
-        'utente':utente,
-        "title":"Catalogo sneakers", 
-        "catalogo": catalogo, 
-        "taglie":Taglia.objects.all(),
+        'title':'Catalogo',
+        'catalogo': catalogo, 
         'pagina':pagina,
         'paginaPiu1':pagina+1,
         'paginaPiu2':pagina+2,
@@ -31,23 +26,29 @@ def home(request):
     return render(request,template_name=templ,context=ctx)
 
 def prodotto(request,idModello):
-    templ = "prodotto/prodotto.html"
+    templ = 'prodotto/prodotto.html'
 
     for taglia in Taglia.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello)):
         taglia.propostaMinore = None
         taglia.offertaMaggiore = None
-        Taglia.save(taglia)
-        if Proposta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').first():
+        
+        if Proposta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').exists():
             proposta = Proposta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').first().prezzo
             taglia.propostaMinore = proposta
-            Taglia.save(taglia)
-        if Offerta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').last():
+        if Offerta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').exists():
             offerta = Offerta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').last().prezzo
             taglia.offertaMaggiore = offerta
-            Taglia.save(taglia)
-    
+
+        Taglia.save(taglia)
+
+    prodotto=Prodotto.objects.get(idModello=idModello)
+    utente = request.user
+    eta=None
+    if utente.dataNascita is not None:
+        eta=time.now().date().year-utente.dataNascita.year
     ctx = { 
-        "prodotto":Prodotto.objects.get(idModello=idModello),
-        "taglie":Taglia.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello))
+        'eta': eta,
+        'prodotto':prodotto,
+        'taglie':Taglia.objects.filter(prodotto=prodotto)
     }
     return render(request,template_name=templ,context=ctx)

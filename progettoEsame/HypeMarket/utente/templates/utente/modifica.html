@@ -2,46 +2,24 @@
 {% block head %}
     {% load crispy_forms_tags %}
     {% load static %}
-    <link rel="stylesheet" href="{% static '/css/form.css' %}">
+    <link rel='stylesheet' href="{% static '/css/form.css' %}">
 {% endblock %}
 {% block title %}Login{% endblock %}
 {% block content %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3">
+    <div class='container'>
+        <div class='row'>
+            <div class='col-md-3'>
             </div>
-            <div class="col-md-6" id='form'>
+            <div class='col-md-6' id='form'>
                 <div class='row'>
-                    <div class="col-12">
-                        <button onclick="location.href = '{{ url}}'" class="btn btn-danger"><i class="bi bi-x-square-fill"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class='row'>
-                    {% if offerta %}
-                        <h2 class='text-center'>Inserisci un'offerta</h2>
-                    {% elif proposta %}
-                        <h2 class='text-center'>Inserisci una proposta</h2>
-                    {% else %}
                         <h2 class='text-center'>Modifica</h2>
-                    {% endif %}
-                    {% if offerta or proposta%}
-                        {% if offertaMaggiore %}
-                            <h5 class='text-center'>L'offerta più alta sul prodotto è di: {{offertaMaggiore.prezzo}}€ </h5>
-                        {% elif propostaMinore %}
-                            <h5 class='text-center'>La proposta più bassa sul prodotto è di: {{propostaMinore.prezzo}}€ </h5>
-                        {% else %}
-                            <h5 class='text-center'>Nessun prezzo presente per questa taglia! </h5>
-                        {% endif %}
-                    {% else %}
-                        <h2 class='text-center'>Modifica</h2>
-                    {% endif %}
-                    <form method="POST">{% csrf_token %}
+                    <form method='POST'>{% csrf_token %}
                         {{form|crispy}}
-                        <div class="row mx-auto text-center">
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary">Modifica</button>
+                        <div class='row mx-auto text-center'>
+                            <div class='col-12'>
+                                <button type='button' onclick="location.href = '/utente/account'" class='pulsanti btn btn-danger'><i class="bi bi-arrow-left"></i></button>
+                                <button type='submit' class='pulsanti btn btn-dark'>Modifica</button>
                             </div>
                         </div>
                     </form>
@@ -49,9 +27,9 @@
                         {% if messages %}
                             {% for message in messages %}
                                 {% if message.tags == 'success' %}
-                                    <div class="alert alert-success" role="alert">
+                                    <div class='alert alert-success' role='alert'>
                                 {% else%}
-                                    <div class="alert alert-danger" role="alert">
+                                    <div class='alert alert-danger' role='alert'>
                                 {% endif %}
                                     {{message}}
                                 </div>
@@ -59,7 +37,7 @@
                         {% endif %}
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class='col-md-3'>
             </div>
         </div>
     </div>
