@@ -44,6 +44,17 @@
                             <div class='col-6'>
                                 <button type='button' id='proponi' class='btn btn-dark w-100 disabled'>Proponi</button>
                             </div>
+                            <div class='row mt-3'>
+                                <div class='col-4'>
+                                    <button type='button' id='offerte' class='btn btn-dark w-100 disabled'>Offerte</button>
+                                </div>
+                                <div class='col-4'>
+                                    <button type='button' id='proposte' class='btn btn-dark w-100 disabled'>Proposte</button>
+                                </div>
+                                <div class='col-4'>
+                                    <button type='button' id='vendite' class='btn btn-dark w-100 disabled'>Vendite</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class='col-1'></div>
@@ -95,27 +106,27 @@
             </div>
         </div>
     </div>
+    <div id='offerte' hidden>
+        {% if viewOfferte %}
+            {{ offerte | json_script:'offerte-data'}}
+        {% endif %}
+    </div>
     {% if messages %}
         {% for message in messages %}
             {% if message|stringformat:'s' == 'carta' %}
                 <div hidden id='carta'>carta</div>
-                <p> carta </p>
                 {{ break }}
             {% elif message|stringformat:'s' == 'spedizione' %}
                 <div hidden id='spedizione'>spedizione</div>
-                <p> spedizione </p>
                 {{ break }}
             {% elif message|stringformat:'s' == 'banca' %}
                 <div hidden id='banca'>banca</div>
-                <p> banca </p>
                 {{ break }}
             {% elif message|stringformat:'s' == 'fatturazione' %}
                 <div hidden id='fatturazione'>fatturazione</div>
-                <p> fatturazione </p>
                 {{ break }}
             {% elif message|stringformat:'s' == 'corrispondenteAcquisto' %}
                 <div hidden id='corrispondenteAcquisto'>corrispondenteAcquisto</div>
-                <h1> corrispondenteAcquisto </h1>
                 {{ break }}
             {% elif message|stringformat:'s' == 'corrispondenteVendita' %}
                 <div hidden id='corrispondenteVendita'>corrispondenteVendita</div>
@@ -128,13 +139,35 @@
 {% block script%}
 <script>
     $(document).ready(function() {
+        var offerte =$('#offerte-data').text();
+        if(offerte != ''){
+            offerte = JSON.parse(offerte);
+            if (offerte.length > 0) {
+                let html = '';
+                for (var i=0;i<offerte.length;i++){
+                    html += `<p><b>Data:</b> ${offerte[i].data}, <b>Prezzo:</b> ${offerte[i].prezzo}<p>`;
+                }
+        
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Offerte disponibili',
+                    html: html
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Attenzione',
+                    text: 'Non ci sono offerte disponibili per questa taglia',
+                });
+            }
+        }
 
         $('input[type="checkbox"]').on('change', function() {
             $('input[type="checkbox"]').not(this).prop('checked', false);
             if ($(this).is(':checked')) {
-                $('#vendi,#acquista,#proponi,#offri ').removeClass('disabled');
+                $('#vendi,#acquista,#proponi,#offri,#offerte,#proposte,#vendite').removeClass('disabled');
             } else {
-                $('#vendi,#acquista,#proponi,#offri').addClass('disabled');
+                $('#vendi,#acquista,#proponi,#offri,#offerte,#proposte,#vendite').addClass('disabled');
             }
         });
 
@@ -214,6 +247,24 @@
                     });
                 }
             }
+        });
+
+        $('#offerte').on('click', function() {
+            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+            var prodotto = '{{ prodotto.idModello}}'
+            window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'?viewOfferte=true';
+        });
+
+        $('#proposte').on('click', function() {
+            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+            var prodotto = '{{ prodotto.idModello}}'
+            window.location.href = '/gestione/proposte/'+prodotto+'?taglia=' + taglia;
+        });
+
+        $('#vendite').on('click', function() {
+            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+            var prodotto = '{{ prodotto.idModello}}'
+            window.location.href = '/gestione/vendite/'+prodotto+'?taglia=' + taglia;
         });
 
         if(checkEta()){

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import *
 from utente.models import *
 from HypeMarket.forms import *
+from collections import namedtuple
 
 def home(request):
     try:
@@ -46,9 +47,23 @@ def prodotto(request,idModello):
     eta=None
     if utente.dataNascita is not None:
         eta=time.now().date().year-utente.dataNascita.year
+
+    taglia=checkTaglia(request,prodotto)
+    off=[]
+    if taglia != None and request.GET.get('viewOfferte') != None:
+        offerte = Offerta.objects.filter(prodotto=prodotto,taglia=taglia).all()
+        for offerta in offerte:
+            off.append({'data': offerta.data.strftime('%d/%m/%Y'), 'prezzo': offerta.prezzo})
     ctx = { 
         'eta': eta,
         'prodotto':prodotto,
-        'taglie':Taglia.objects.filter(prodotto=prodotto)
+        'taglie':Taglia.objects.filter(prodotto=prodotto),
+        'offerte':off,
     }
     return render(request,template_name=templ,context=ctx)
+
+def checkTaglia(request,prodotto):
+    for t in Taglia.objects.filter(prodotto=prodotto):
+        if t.taglia == request.GET.get('taglia'):
+            return t
+    return None
