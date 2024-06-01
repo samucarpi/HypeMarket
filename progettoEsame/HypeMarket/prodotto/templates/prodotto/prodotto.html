@@ -18,7 +18,20 @@
                     </div>
                     <div class='col-12 text-left flex-grow-1' style='white-space: nowrap;'>
                         <br>
-                        <h3>{{ prodotto.titolo }}</h3>
+                        <h3>
+                            {{ prodotto.titolo }} &nbsp;&nbsp;
+                            {% if wishlist %}
+                                {% for prod in wishlist%}
+                                    {% if prod.idModello == prodotto.idModello %}
+                                        <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?pref=aggiungi'> <i class="h2 bi bi-heart-fill"></i> </a>
+                                    {% else %}
+                                        <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?pref=aggiungi'> <i class="h2 bi bi-heart"></i> </a>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}?pref=aggiungi'> <i class="h2 bi bi-heart"></i> </a>
+                            {% endif %}
+                        </h3>
                     </div>
                     <div class='col-12 text-center flex-grow-1'>
                         <img style='width:115%;'src='{{ prodotto.immagine }}'>
@@ -106,9 +119,13 @@
             </div>
         </div>
     </div>
-    <div id='offerte' hidden>
-        {% if viewOfferte %}
-            {{ offerte | json_script:'offerte-data'}}
+    <div hidden>
+        {% if off %}
+            <span id='viewOfferte'>{{ viewOfferte | json_script:'viewJson'}}</span>
+        {% elif prop %}
+            <span id='viewProposte'>{{ viewProposte | json_script:'viewJson'}}</span>
+        {% elif vend %}
+            <span id='viewVendite'>{{ viewVendite | json_script:'viewJson'}}</span>
         {% endif %}
     </div>
     {% if messages %}
@@ -139,28 +156,6 @@
 {% block script%}
 <script>
     $(document).ready(function() {
-        var offerte =$('#offerte-data').text();
-        if(offerte != ''){
-            offerte = JSON.parse(offerte);
-            if (offerte.length > 0) {
-                let html = '';
-                for (var i=0;i<offerte.length;i++){
-                    html += `<p><b>Data:</b> ${offerte[i].data}, <b>Prezzo:</b> ${offerte[i].prezzo}<p>`;
-                }
-        
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Offerte disponibili',
-                    html: html
-                });
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Attenzione',
-                    text: 'Non ci sono offerte disponibili per questa taglia',
-                });
-            }
-        }
 
         $('input[type="checkbox"]').on('change', function() {
             $('input[type="checkbox"]').not(this).prop('checked', false);
@@ -170,6 +165,38 @@
                 $('#vendi,#acquista,#proponi,#offri,#offerte,#proposte,#vendite').addClass('disabled');
             }
         });
+
+        function view(view, successo, errore){
+            view = JSON.parse(view);
+            if (view.length > 0) {
+                let html = '';
+                for (var i=0;i<view.length;i++){
+                    html += `<p><b>Data:</b> ${view[i].data}, <b>Prezzo:</b> ${view[i].prezzo}<p><hr>`;
+                }
+                Swal.fire({
+                    icon: 'info',
+                    title: successo,
+                    html: '<hr>'+html
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Attenzione',
+                    text: errore,
+                });
+            }
+        }
+
+        var viewOfferte = $('#viewOfferte').text();
+        var viewProposte = $('#viewProposte').text();
+        var viewVendite = $('#viewVendite').text();
+        if(viewOfferte != ''){
+            view(viewOfferte,'Offerte per questa taglia','Non ci sono offerte per questa taglia');
+        }else if(viewProposte != ''){
+            view(viewProposte,'Proposte per questa taglia','Non ci sono proposte per questa taglia');
+        }else if(viewVendite != ''){
+            view(viewVendite,'Vendite per questa taglia','Non ci sono vendite per questa taglia');
+        }
 
         function checkEta(){
             if('{{ eta }}' == 'None'){
@@ -189,6 +216,21 @@
             }
             return true;
         }
+
+        function datiMancanti(oggetto,stringa){
+            if (oggetto.text() != ''){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Attenzione',
+                    text: stringa,
+                });
+            }
+        }
+
+        datiMancanti( $('#spedizione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di spedizione');
+        datiMancanti( $('#carta'),'Prima di eseguire l\'azione, inserire i dati della carta di credito');
+        datiMancanti( $('#fatturazione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di fatturazione');
+        datiMancanti( $('#banca'),'Prima di eseguire l\'azione, inserire i dati del conto bancario');
 
         $('#offri').on('click', function() {
             if(checkEta()){
@@ -213,7 +255,7 @@
     
         $('#vendi').on('click', function() {
             if(checkEta()){
-                errore( $('#corrispondenteVendita'),'Impossibile vendere il prodotto, l\'offerta più alta è la tua');
+                datiMancanti( $('#corrispondenteVendita'),'Impossibile vendere il prodotto, l\'offerta più alta è la tua');
                 var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
                 var prodotto = '{{ prodotto.idModello}}'
                 var offerta = $('input[type="checkbox"]:checked').next().children().children().last().text().trim();
@@ -232,7 +274,7 @@
 
         $('#acquista').on('click', function() {
             if(checkEta()){
-                errore( $('#corrispondenteAcquisto'),'Impossibile acquistare il prodotto, la proposta più bassa è la tua');
+                datiMancanti( $('#corrispondenteAcquisto'),'Impossibile acquistare il prodotto, la proposta più bassa è la tua');
                 var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
                 var prodotto = '{{ prodotto.idModello}}'
                 var proposta = $('input[type="checkbox"]:checked').next().children().children().first().next().text().trim();
@@ -252,37 +294,20 @@
         $('#offerte').on('click', function() {
             var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
             var prodotto = '{{ prodotto.idModello}}'
-            window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'?viewOfferte=true';
+            window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewOfferte';
         });
 
         $('#proposte').on('click', function() {
             var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
             var prodotto = '{{ prodotto.idModello}}'
-            window.location.href = '/gestione/proposte/'+prodotto+'?taglia=' + taglia;
+            window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewProposte';
         });
 
         $('#vendite').on('click', function() {
             var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
             var prodotto = '{{ prodotto.idModello}}'
-            window.location.href = '/gestione/vendite/'+prodotto+'?taglia=' + taglia;
+            window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewVendite';
         });
-
-        if(checkEta()){
-            function errore(oggetto,stringa){
-                if (oggetto.text() != ''){
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Attenzione',
-                        text: stringa,
-                    });
-                }
-            }
-           
-            errore( $('#spedizione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di spedizione');
-            errore( $('#banca'),'Prima di eseguire l\'azione, inserire i dati del conto bancario');
-            errore( $('#fatturazione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di fatturazione');
-            errore( $('#carta'),'Prima di eseguire l\'azione, inserire i dati della carta di credito');
-        }
     });
         
 </script>

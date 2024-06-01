@@ -51,4 +51,4 @@ class CartaCredito(models.Model):
 
 class Wishlist(models.Model):
     utente=models.ForeignKey(Utente,related_name='wishlist', on_delete=models.CASCADE)
-    prodotto = models.ManyToManyField(Prodotto)
+    prodotti = models.ManyToManyField(Prodotto)

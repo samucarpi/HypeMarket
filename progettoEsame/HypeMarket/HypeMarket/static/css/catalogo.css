@@ -1,25 +1,13 @@
-
-#titolo{
-    text-align: center;
-    padding: 20px;
-    width: 80%;
-    margin-bottom: 20px;
-    background-color: #c1c1c1;
-}
-
 #catalogo{
-    margin: auto;
-    text-align: center;
-    width: 60%;
-    min-width: 500px;
+    overflow-x: hidden;
 }
-
 .imgProd{
     width: 80%;
     margin: auto;
 }
 .col{
-    padding: 0px;
+    border: 1px solid #c1c1c1;
+    border-radius: 20px;
 }
 .titoloProd{
     margin: auto;

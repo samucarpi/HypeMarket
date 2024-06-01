@@ -17,6 +17,9 @@ def registrazioneForm(request):
         form = Registrazione(request.POST)
         if form.is_valid() and checkPassword(form,request):
             form.save()
+            wishlist = Wishlist()
+            wishlist.utente = Utente.objects.get(username=form.cleaned_data['username'])
+            wishlist.save()
             messages.success(request, 'Sei stato registrato con successo!')
             return redirect('utente:Login')
         else:
@@ -233,4 +236,56 @@ def elimina(request,tipo):
         return redirect('utente:Login')
     return redirect('utente:Account')
 
+@login_required(login_url='utente:Login')
+def aggiungiPreferiti(request,idModello):
+    if request.GET.get('p'):
+        try:
+            pagina=int(request.GET.get('p'))
+        except:
+            pagina=1
+        url='/sneakers/home?p='+str(pagina)
+    elif request.GET.get('page'):
+        try:
+            pagina=int(request.GET.get('page'))
+        except:
+            pagina=1
+        url='/utente/wishlist?page='+str(pagina)
+    elif request.GET.get('pref'):
+        url='http://localhost:8000/sneakers/'+str(idModello)
     
+    utente = request.user
+    prodotto=Prodotto.objects.filter(idModello=idModello).first()
+    wishlist = Wishlist.objects.filter(utente=utente).first()
+    if prodotto not in wishlist.prodotti.all():
+        wishlist.prodotti.add(prodotto)
+        wishlist.save()
+    else:
+        wishlist.prodotti.remove(prodotto)
+        wishlist.save()
+    return redirect(url,idModello=idModello)
+
+@login_required(login_url='utente:Login')
+def wishlist(request):
+    templ = 'utente/wishlist.html'
+    utente = request.user
+    try:
+        pagina=int(request.GET.get('p'))
+    except:
+        pagina=1
+    paginaMax=int(len(Wishlist.objects.filter(utente=utente).first().prodotti.all())/24+1)
+    selezioneInizo=(pagina-1)*24
+    selezioneFine=pagina*24
+    wishlist=Wishlist.objects.filter(utente=utente).first().prodotti.all()[selezioneInizo:selezioneFine]
+    
+    ctx = {
+        'title':'Wishlist',
+        'wishlist': wishlist, 
+        'pagina':pagina,
+        'paginaPiu1':pagina+1,
+        'paginaPiu2':pagina+2,
+        'paginaMeno1':pagina-1,
+        'paginaMax':paginaMax,
+        'wishlist':wishlist
+    }
+
+    return render(request,template_name=templ,context=ctx)

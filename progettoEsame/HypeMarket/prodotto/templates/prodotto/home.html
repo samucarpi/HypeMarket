@@ -9,42 +9,57 @@
 
 {% block content %}
 {{block.super}}
-    <div id='catalogo' class='container'>
+    <div id='catalogo' class='container mt-4'>
         <div class='row'>
             <div class='col-12'>
-                <div class='row small-gutters'>
+                <div class='row'>
                     {% for prod in catalogo %}
-                            <a class='col col-6 col-md-4 col-lg-3 mb-4' href='http://localhost:8000/sneakers/{{prod.idModello}}'>
-                                <img src='{{ prod.immagine }}' class='imgProd' alt='...'>
-                                <p class='titoloProd'>{{ prod.titolo }}</p>
-                            </a>
+                        <div class='col-3'>
+                            {% if wishlist %}
+                                {% for prodotto in wishlist %}
+                                    {% if prodotto.idModello == prod.idModello %}
+                                        <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?p={{pagina}}'> <i class="h4 bi bi-heart-fill"></i> </a>
+                                    {% else %}
+                                        <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?p={{pagina}}'> <i class="h4 bi bi-heart"></i> </a>
+                                    {% endif %}
+                                {% endfor %}
+                            {%else%}
+                                <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?p={{pagina}}'> <i class="h4 bi bi-heart"></i> </a>
+                            {% endif %}
+                            <div class='row text-center'>
+                                <a href='/sneakers/{{prod.idModello}}'><img src='{{ prod.immagine }}' class='imgProd'></a>
+                            </div>
+                            <p class='titoloProd'>{{ prod.titolo }}</p>
+                        </div>
                     {% endfor %}
+                    <div class='col-12'>
+                        <nav class='naviga d-flex justify-content-center'>
+                            <ul class='pagination'>
+                                {% if pagina == 1 %}
+                                    <li class='page-item disabled'><a class='page-link'><i class='bi bi-arrow-left'></i></a></li>
+                                {% else %}
+                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaMeno1}}'><i class='bi bi-arrow-left'></i></a></li>
+                                {% endif %}
+                                <li class='page-item active'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{pagina}}'>{{pagina}}</a></li>
+        
+                                {% if paginaPiu1 <= paginaMax %}
+                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu1}}'>{{paginaPiu1}}</a></li>
+                                {% endif %}
+        
+                                {% if paginaPiu2 <= paginaMax %}
+                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu2}}'>{{paginaPiu2}}</a></li>
+                                {% endif %}
+        
+                                {% if pagina == paginaMax %}
+                                    <li class='page-item disabled' ><a class='page-link' ><i class='bi bi-arrow-right'></i></a></li>
+                                {% else %}
+                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu1}}'><i class='bi bi-arrow-right'></i></a></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
-            <nav class='naviga'>
-                <ul class='pagination'>
-                    {% if pagina == 1 %}
-                        <li class='page-item disabled'><a class='page-link'><i class='bi bi-arrow-left'></i></a></li>
-                    {% else %}
-                        <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaMeno1}}'><i class='bi bi-arrow-left'></i></a></li>
-                    {% endif %}
-                    <li class='page-item active'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{pagina}}'>{{pagina}}</a></li>
-
-                    {% if paginaPiu1 <= paginaMax %}
-                        <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu1}}'>{{paginaPiu1}}</a></li>
-                    {% endif %}
-
-                    {% if paginaPiu2 <= paginaMax %}
-                        <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu2}}'>{{paginaPiu2}}</a></li>
-                    {% endif %}
-
-                    {% if pagina == paginaMax %}
-                        <li class='page-item disabled' ><a class='page-link' ><i class='bi bi-arrow-right'></i></a></li>
-                    {% else %}
-                        <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu1}}'><i class='bi bi-arrow-right'></i></a></li>
-                    {% endif %}
-                </ul>
-            </nav>
         </div>
     </div>
 {% endblock %}

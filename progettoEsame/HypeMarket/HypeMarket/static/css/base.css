@@ -5,4 +5,12 @@
 
 .sfondo{
     background-color: #e3e6e8;
-  } 
+}
+
+body{
+    overflow-x: hidden;
+}
+
+.cuore{
+    color:red;
+}

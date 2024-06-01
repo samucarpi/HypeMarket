@@ -15,6 +15,11 @@ def home(request):
     catalogo=Prodotto.objects.all()[selezioneInizo:selezioneFine]
 
     templ = 'prodotto/home.html'
+    utente=request.user
+    wishlist=None
+    if utente.is_authenticated:
+        wishlist = Wishlist.objects.filter(utente=utente).first().prodotti.all()
+    
     ctx = {
         'title':'Catalogo',
         'catalogo': catalogo, 
@@ -22,8 +27,10 @@ def home(request):
         'paginaPiu1':pagina+1,
         'paginaPiu2':pagina+2,
         'paginaMeno1':pagina-1,
-        'paginaMax':paginaMax
+        'paginaMax':paginaMax,
+        'wishlist':wishlist
     }
+
     return render(request,template_name=templ,context=ctx)
 
 def prodotto(request,idModello):
@@ -45,20 +52,45 @@ def prodotto(request,idModello):
     prodotto=Prodotto.objects.get(idModello=idModello)
     utente = request.user
     eta=None
-    if utente.dataNascita is not None:
-        eta=time.now().date().year-utente.dataNascita.year
+
+    wishlist=None
+    if utente.is_authenticated:
+        wishlist = Wishlist.objects.filter(utente=utente).first().prodotti.all()
+
+    if utente.is_authenticated:
+        if utente.dataNascita is not None:
+            eta=time.now().date().year-utente.dataNascita.year
 
     taglia=checkTaglia(request,prodotto)
-    off=[]
-    if taglia != None and request.GET.get('viewOfferte') != None:
-        offerte = Offerta.objects.filter(prodotto=prodotto,taglia=taglia).all()
-        for offerta in offerte:
-            off.append({'data': offerta.data.strftime('%d/%m/%Y'), 'prezzo': offerta.prezzo})
+    viewOfferte,viewProposte,viewVendite=[],[],[]
+    off,prop,vend=False,False,False
+    if request.GET.get('taglia') != None: 
+        if request.GET.get('viewOfferte') != None:
+            off=True
+            offerte = Offerta.objects.filter(prodotto=prodotto,taglia=taglia).all()
+            for offerta in offerte:
+                viewOfferte.append({'data': offerta.data.strftime('%d/%m/%Y'), 'prezzo': offerta.prezzo})
+        elif request.GET.get('viewProposte') != None:
+            prop=True
+            proposte = Proposta.objects.filter(prodotto=prodotto,taglia=taglia).all()
+            for proposta in proposte:
+                viewProposte.append({'data': proposta.data.strftime('%d/%m/%Y'), 'prezzo': proposta.prezzo})
+        elif request.GET.get('viewVendite') != None:
+            vend=True
+            vendite = Vendita.objects.filter(prodotto=prodotto,taglia=taglia).all()
+            for vendita in vendite:
+                viewVendite.append({'data': vendita.data.strftime('%d/%m/%Y'), 'prezzo': vendita.prezzo})
     ctx = { 
         'eta': eta,
         'prodotto':prodotto,
         'taglie':Taglia.objects.filter(prodotto=prodotto),
-        'offerte':off,
+        'viewOfferte':viewOfferte,
+        'viewProposte':viewProposte,
+        'viewVendite':viewVendite,
+        'off':off,
+        'prop':prop,
+        'vend':vend,
+        'wishlist':wishlist
     }
     return render(request,template_name=templ,context=ctx)
 
