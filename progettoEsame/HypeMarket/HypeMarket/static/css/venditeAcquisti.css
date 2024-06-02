@@ -1,0 +1,16 @@
+.item{
+    padding-top: 5px;
+}
+
+.immagine{
+    display: table;
+}
+
+.box{
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.immagine img{
+    width: 100%;
+}

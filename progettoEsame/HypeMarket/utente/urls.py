@@ -21,4 +21,6 @@ urlpatterns = [
     path('account/elimina/<str:tipo>', elimina, name='Modifica'),
     path('preferiti/<str:idModello>', aggiungiPreferiti, name='Aggiunta ai preferiti'),
     path('wishlist', wishlist, name='Preferiti'),
+    path('vendite', vendite, name='Vendite'),
+    path('acquisti', acquisti, name='Acquisti'),
 ]

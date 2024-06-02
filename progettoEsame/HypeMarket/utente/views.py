@@ -5,6 +5,8 @@ from django.contrib import messages
 from HypeMarket.forms import *
 from datetime import datetime as time
 
+templModifica = 'utente/modifica.html'
+
 def checkPassword(form,request):
     if form.cleaned_data['password'] != form.cleaned_data['confermaPassword']:
         messages.error(request,'Password non corrispondenti')
@@ -55,7 +57,7 @@ def loginForm(request):
     
 def logoutAction(request):
     logout(request)
-    return redirect('/sneakers/home')
+    return redirect('/sneakers/catalogo')
     
 @login_required(login_url='utente:Login')
 def account(request):
@@ -100,7 +102,6 @@ def checkData(form,request):
 
 @login_required(login_url='utente:Login')
 def modificaInformazioni(request):
-    templ='utente/modifica.html'
     utente = request.user
     if request.method == 'POST':
         form = Informazioni(request.POST)
@@ -108,14 +109,13 @@ def modificaInformazioni(request):
             form.save(utente=utente)
             return redirect('utente:Account')
         else:
-            return render(request,template_name=templ,context={'form':form})
+            return render(request,template_name=templModifica,context={'form':form})
     else:
         form = Informazioni()
-        return render(request,template_name=templ,context={'form':form})
+        return render(request,template_name=templModifica,context={'form':form})
 
 @login_required(login_url='utente:Login')
 def modificaIndirizzoSpedizione(request):
-    templ='utente/modifica.html'
     utente = request.user
     if request.method == 'POST':
         form = Spedizione(request.POST)
@@ -125,14 +125,13 @@ def modificaIndirizzoSpedizione(request):
             form.save(utente=utente)
             return redirect('utente:Account')
         else:
-            return render(request,template_name=templ,context={'form':form})
+            return render(request,template_name=templModifica,context={'form':form})
     else:
         form = Spedizione()
-        return render(request,template_name=templ,context={'form':form})
+        return render(request,template_name=templModifica,context={'form':form})
     
 @login_required(login_url='utente:Login')
 def modificaIndirizzoFatturazione(request):
-    templ='utente/modifica.html'
     utente = request.user
     if request.method == 'POST':
         form = Fatturazione(request.POST)
@@ -142,10 +141,10 @@ def modificaIndirizzoFatturazione(request):
             form.save(utente=utente)
             return redirect('utente:Account')
         else:
-            return render(request,template_name=templ,context={'form':form})
+            return render(request,template_name=templModifica,context={'form':form})
     else:
         form = Fatturazione()
-        return render(request,template_name=templ,context={'form':form})
+        return render(request,template_name=templModifica,context={'form':form})
 
 def checkBanca(form,request):
     if len(form.cleaned_data['iban']) != 27:
@@ -155,7 +154,6 @@ def checkBanca(form,request):
 
 @login_required(login_url='utente:Login')
 def modificaBanca(request):
-    templ='utente/modifica.html'
     utente = request.user
     if request.method == 'POST':
         form = Banca(request.POST)
@@ -163,10 +161,10 @@ def modificaBanca(request):
             form.save(utente=utente)
             return redirect('utente:Account')
         else:
-            return render(request,template_name=templ,context={'form':form})
+            return render(request,template_name=templModifica,context={'form':form})
     else:
         form = Banca()
-        return render(request,template_name=templ,context={'form':form})
+        return render(request,template_name=templModifica,context={'form':form})
     
 def checkCarta(form,request):
     try:
@@ -196,7 +194,6 @@ def checkCarta(form,request):
 
 @login_required(login_url='utente:Login')
 def modificaCarta(request):
-    templ='utente/modifica.html'
     utente = request.user
     if request.method == 'POST':
         form = Carta(request.POST)
@@ -204,10 +201,10 @@ def modificaCarta(request):
             form.save(utente=utente)
             return redirect('utente:Account')
         else:
-            return render(request,template_name=templ,context={'form':form})
+            return render(request,template_name=templModifica,context={'form':form})
     else:
         form = Carta()
-        return render(request,template_name=templ,context={'form':form})
+        return render(request,template_name=templModifica,context={'form':form})
 
 @login_required(login_url='utente:Login')
 def elimina(request,tipo):
@@ -238,20 +235,13 @@ def elimina(request,tipo):
 
 @login_required(login_url='utente:Login')
 def aggiungiPreferiti(request,idModello):
+    url=request.META.get('HTTP_REFERER', '/').split('?')[0]
     if request.GET.get('p'):
         try:
             pagina=int(request.GET.get('p'))
         except:
             pagina=1
-        url='/sneakers/home?p='+str(pagina)
-    elif request.GET.get('page'):
-        try:
-            pagina=int(request.GET.get('page'))
-        except:
-            pagina=1
-        url='/utente/wishlist?page='+str(pagina)
-    elif request.GET.get('pref'):
-        url='http://localhost:8000/sneakers/'+str(idModello)
+        url=url +'?p='+str(pagina)
     
     utente = request.user
     prodotto=Prodotto.objects.filter(idModello=idModello).first()
@@ -286,6 +276,36 @@ def wishlist(request):
         'paginaMeno1':pagina-1,
         'paginaMax':paginaMax,
         'wishlist':wishlist
+    }
+
+    return render(request,template_name=templ,context=ctx)
+
+@login_required(login_url='utente:Login')
+def vendite(request):
+    templ = 'utente/venditeAcquisti.html'
+    utente = request.user
+    vendite = Vendita.objects.filter(utente=utente).all().order_by('data')
+    proposte = Proposta.objects.filter(utente=utente).all().order_by('data')
+    ctx = {
+        'title':'Vendite e proposte',
+        'vendite': vendite,
+        'proposte' : proposte,
+        'viewVendite':True,
+    }
+
+    return render(request,template_name=templ,context=ctx)
+
+@login_required(login_url='utente:Login')
+def acquisti(request):
+    templ = 'utente/venditeAcquisti.html'
+    utente = request.user
+    acquisti = Acquisto.objects.filter(utente=utente).all().order_by('data')
+    offerte = Offerta.objects.filter(utente=utente).all().order_by('data')
+    ctx = {
+        'title':'Acquisti e offerte',
+        'acquisti': acquisti,
+        'offerte' : offerte,
+        'viewVendite':False,
     }
 
     return render(request,template_name=templ,context=ctx)

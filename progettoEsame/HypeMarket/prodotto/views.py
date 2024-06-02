@@ -2,9 +2,8 @@ from django.shortcuts import render
 from .models import *
 from utente.models import *
 from HypeMarket.forms import *
-from collections import namedtuple
 
-def home(request):
+def catalogo(request):
     try:
         pagina=int(request.GET.get('p'))
     except:
@@ -14,7 +13,7 @@ def home(request):
     selezioneFine=pagina*24
     catalogo=Prodotto.objects.all()[selezioneInizo:selezioneFine]
 
-    templ = 'prodotto/home.html'
+    templ = 'prodotto/catalogo.html'
     utente=request.user
     wishlist=None
     if utente.is_authenticated:

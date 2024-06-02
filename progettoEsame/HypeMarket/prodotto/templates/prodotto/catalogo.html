@@ -38,22 +38,22 @@
                                 {% if pagina == 1 %}
                                     <li class='page-item disabled'><a class='page-link'><i class='bi bi-arrow-left'></i></a></li>
                                 {% else %}
-                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaMeno1}}'><i class='bi bi-arrow-left'></i></a></li>
+                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/catalogo?p={{paginaMeno1}}'><i class='bi bi-arrow-left'></i></a></li>
                                 {% endif %}
-                                <li class='page-item active'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{pagina}}'>{{pagina}}</a></li>
+                                <li class='page-item active'><a class='page-link' href='http://localhost:8000/sneakers/catalogo?p={{pagina}}'>{{pagina}}</a></li>
         
                                 {% if paginaPiu1 <= paginaMax %}
-                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu1}}'>{{paginaPiu1}}</a></li>
+                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/catalogo?p={{paginaPiu1}}'>{{paginaPiu1}}</a></li>
                                 {% endif %}
         
                                 {% if paginaPiu2 <= paginaMax %}
-                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu2}}'>{{paginaPiu2}}</a></li>
+                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/catalogo?p={{paginaPiu2}}'>{{paginaPiu2}}</a></li>
                                 {% endif %}
         
                                 {% if pagina == paginaMax %}
                                     <li class='page-item disabled' ><a class='page-link' ><i class='bi bi-arrow-right'></i></a></li>
                                 {% else %}
-                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/home?p={{paginaPiu1}}'><i class='bi bi-arrow-right'></i></a></li>
+                                    <li class='page-item'><a class='page-link' href='http://localhost:8000/sneakers/catalogo?p={{paginaPiu1}}'><i class='bi bi-arrow-right'></i></a></li>
                                 {% endif %}
                             </ul>
                         </nav>

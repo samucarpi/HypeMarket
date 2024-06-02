@@ -6,5 +6,7 @@ urlpatterns = [
     path('offerta/<str:idModello>', offerta, name='Offerta'),
     path('proposta/<str:idModello>', proposta, name='Proposta'),
     path('vendita/<str:idModello>', vendita, name='Vendita'),
-    path('acquisto/<str:idModello>', acquisto, name='Acquisto')
+    path('acquisto/<str:idModello>', acquisto, name='Acquisto'),
+    path('elimina/proposta/<str:idModello>', eliminaProposta, name='EliminaProposta'),
+    path('elimina/offerta/<str:idModello>', eliminaOfferta, name='EliminaOfferta'),
 ]

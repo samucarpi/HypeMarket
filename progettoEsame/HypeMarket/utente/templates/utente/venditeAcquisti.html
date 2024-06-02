@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {% load static %}
+    <link rel='stylesheet' href="{% static '/css/venditeAcquisti.css' %}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+{{block.super}}
+    <div class='container'>
+        <div class='row mt-4'>
+            <div class='col-5'>
+                {%if viewVendite %}
+                    <h2 class='text-center'>Vendite</h2>
+                    {%if vendite %}
+                        {% for vendita in vendite %}
+                            <hr>
+                            <div class='row mb-1 item'>
+                                <div class='col-lg-4 col-12 text-center immagine'>
+                                    <div class='box'>
+                                        <img src='{{ vendita.prodotto.immagine }}'>
+                                    </div>
+                                </div>
+                                <div class='col-lg-8 col-12'>
+                                    <p><b> {{ vendita.prodotto.titolo }}</b></p>
+                                    <p><b>ID: </b> {{ vendita.prodotto.idModello }} </p>
+                                    <p><b>Taglia: </b> {{ vendita.taglia.taglia }}</p>
+                                    <p><b>Payout: </b> {{ vendita.prezzo }}€</p>
+                                    <p><b>Data: </b> {{ vendita.data }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <hr>
+                        <h4 class='text-center'>Nessuna vendita effettuata</h4>
+                    {% endif %}
+                {% else %}
+                    <h2 class='text-center'>Acquisti</h2>
+                    {%if acquisti %}
+                        {% for acquisto in acquisti %}
+                            <hr>
+                            <div class='row mb-1 item'>
+                                <div class='col-lg-4 col-12 text-center immagine'>
+                                    <div class='box'>
+                                        <img src='{{ acquisto.prodotto.immagine }}'>
+                                    </div>
+                                </div>
+                                <div class='col-lg-8 col-12'>
+                                    <p><b> {{ acquisto.prodotto.titolo }}</b></p>
+                                    <p><b>ID: </b> {{ acquisto.prodotto.idModello }} </p>
+                                    <p><b>Taglia: </b> {{ acquisto.taglia.taglia }}</p>
+                                    <p><b>Prezzo: </b> {{ acquisto.prezzo }}€</p>
+                                    <p><b>Data: </b> {{ acquisto.data }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <hr>
+                        <h4 class='text-center'>Nessun acquisto effettuato</h4>
+                    {% endif %}
+                {% endif%}
+            </div>
+            <div class='col-1'></div>
+            <div class='col-5'>
+                {%if viewVendite %}
+                    <h2 class='text-center'>Proposte</h2>
+                    {% if proposte %}
+                        {% for proposta in proposte %}
+                            <hr>
+                            <div class='row mb-1 item'>
+                                <div class='col-lg-4 col-12 immagine'>
+                                    <button type='button' onclick="location.href = '/gestione/elimina/proposta/{{proposta.prodotto.idModello}}?taglia={{proposta.taglia.taglia}}'" class='position-absolute btn btn-danger'><i class="bi bi-trash-fill"></i></button>
+                                    <div class='box'>
+                                        <img src='{{ proposta.prodotto.immagine }}'>
+                                    </div>
+                                </div>
+                                <div class='col-lg-8 col-12'>
+                                    <p><b> {{ proposta.prodotto.titolo }}</b></p>
+                                    <p><b> ID: </b> {{ proposta.prodotto.idModello }} </p>
+                                    <p><b>Taglia: </b> {{ proposta.taglia.taglia }}</p>
+                                    <p><b>Payout: </b> 
+                                        {% if proposta.taglia.propostaMinore.prezzo < proposta.prezzo%}
+                                            <span style='color: red;'>{{ proposta.prezzo }}€</span>
+                                        {% else %}
+                                            <span style='color: green;'>{{ proposta.prezzo }}€</span>
+                                        {% endif %}
+                                        </p>
+                                    <p><b>Data: </b> {{ proposta.data }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <hr>
+                        <h4 class='text-center'>Nessuna proposta effettuata</h4>
+                    {% endif %}
+                {% else %}
+                    <h2 class='text-center'>Offerte</h2>
+                    {% if offerte %}
+                        {% for offerta in offerte %}
+                            <hr>
+                            <div class='row mb-1 item'>
+                                <div class='col-lg-4 col-12 immagine'>
+                                    <button type='button' onclick="location.href = '/gestione/elimina/offerta/{{offerta.prodotto.idModello}}?taglia={{offerta.taglia.taglia}}'" class='position-absolute btn btn-danger'><i class="bi bi-trash-fill"></i></button>
+                                    <div class='box'>
+                                        <img src='{{ offerta.prodotto.immagine }}'>
+                                    </div>
+                                </div>
+                                <div class='col-lg-8 col-12'>
+                                    <p><b> {{ offerta.prodotto.titolo }}</b></p>
+                                    <p><b> ID: </b> {{ offerta.prodotto.idModello }} </p>
+                                    <p><b>Taglia: </b> {{ offerta.taglia.taglia }}</p>
+                                    <p><b>Prezzo: </b> 
+                                        {% if offerta.taglia.offertaMaggiore.prezzo > offerta.prezzo%}
+                                            <span style='color: red;'>{{ offerta.prezzo }}€</span>
+                                        {% else %}
+                                            <span style='color: green;'>{{ offerta.prezzo }}€</span>
+                                        {% endif %}
+                                        </p>
+                                    <p><b>Data: </b> {{ offerta.data }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <hr>
+                        <h4 class='text-center'>Nessun offerta effettuata</h4>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

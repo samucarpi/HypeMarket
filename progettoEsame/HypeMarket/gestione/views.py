@@ -206,3 +206,29 @@ def acquisto(request,idModello):
             return redirect(url)
     else:
         return redirect(url)
+
+@login_required(login_url='utente:Login')
+def eliminaProposta(request,idModello):
+    prodotto = Prodotto.objects.get(idModello=idModello)
+    utente = request.user
+    url=request.META.get('HTTP_REFERER', '/').split('?')[0]
+    taglia=checkTaglia(request,prodotto)
+    if taglia != None:
+        if Proposta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).exists():
+            Proposta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).delete()
+        return redirect(url)
+    else:
+        return redirect(url)
+
+@login_required(login_url='utente:Login')
+def eliminaOfferta(request,idModello):
+    prodotto = Prodotto.objects.get(idModello=idModello)
+    utente = request.user
+    url=request.META.get('HTTP_REFERER', '/').split('?')[0]
+    taglia=checkTaglia(request,prodotto)
+    if taglia != None:
+        if Offerta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).exists():
+            Offerta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).delete()
+        return redirect(url)
+    else:
+        return redirect(url)

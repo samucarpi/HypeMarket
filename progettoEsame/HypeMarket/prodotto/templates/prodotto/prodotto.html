@@ -14,7 +14,7 @@
             <div class='col-lg-6 v-100'>
                 <div class='row '>
                     <div class='col-12'>
-                        <button type='button' class='btn btn-dark' onclick="window.location.href='/sneakers/home'"><i class='bi bi-arrow-left'></i> Indietro</button>
+                        <button type='button' class='btn btn-dark' onclick="window.location.href='/sneakers/catalogo'"><i class='bi bi-arrow-left'></i> Indietro</button>
                     </div>
                     <div class='col-12 text-left flex-grow-1' style='white-space: nowrap;'>
                         <br>
@@ -23,13 +23,13 @@
                             {% if wishlist %}
                                 {% for prod in wishlist%}
                                     {% if prod.idModello == prodotto.idModello %}
-                                        <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?pref=aggiungi'> <i class="h2 bi bi-heart-fill"></i> </a>
+                                        <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}'> <i class="h2 bi bi-heart-fill"></i> </a>
                                     {% else %}
-                                        <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?pref=aggiungi'> <i class="h2 bi bi-heart"></i> </a>
+                                        <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}'> <i class="h2 bi bi-heart"></i> </a>
                                     {% endif %}
                                 {% endfor %}
                             {% else %}
-                                <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}?pref=aggiungi'> <i class="h2 bi bi-heart"></i> </a>
+                                <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}'> <i class="h2 bi bi-heart"></i> </a>
                             {% endif %}
                         </h3>
                     </div>

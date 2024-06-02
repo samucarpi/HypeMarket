@@ -16,7 +16,7 @@
                     {% if wishlist %}
                         {% for prod in wishlist %}
                         <div class='col-3'>
-                            <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?page={{pagina}}'> <i class="h4 bi bi-heart-fill"></i> </a>
+                            <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?p={{pagina}}'> <i class="h4 bi bi-heart-fill"></i> </a>
                             <div class='row text-center'>
                                 <a href='/sneakers/{{prod.idModello}}'><img src='{{ prod.immagine }}' class='imgProd'></a>
                             </div>
