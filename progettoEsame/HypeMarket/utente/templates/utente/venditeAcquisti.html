@@ -19,6 +19,9 @@
                             <hr>
                             <div class='row mb-1 item'>
                                 <div class='col-lg-4 col-12 text-center immagine'>
+                                    <div class='position-absolute'>
+                                        <button type='button' onclick="location.href = '/gestione/informazioni/vendita/{{vendita.prodotto.idModello}}?taglia={{vendita.taglia.taglia}}'" class='btn btn-secondary'><i class="bi bi-receipt"></i></button>
+                                    </div>
                                     <div class='box'>
                                         <img src='{{ vendita.prodotto.immagine }}'>
                                     </div>
@@ -42,6 +45,9 @@
                         {% for acquisto in acquisti %}
                             <hr>
                             <div class='row mb-1 item'>
+                                <div class='position-absolute'>
+                                    <button type='button' onclick="location.href = '/gestione/informazioni/acquisto/{{acquisto.prodotto.idModello}}?taglia={{acquisto.taglia.taglia}}'" class='btn btn-secondary'><i class="bi bi-receipt"></i></button>
+                                </div>
                                 <div class='col-lg-4 col-12 text-center immagine'>
                                     <div class='box'>
                                         <img src='{{ acquisto.prodotto.immagine }}'>
@@ -71,7 +77,10 @@
                             <hr>
                             <div class='row mb-1 item'>
                                 <div class='col-lg-4 col-12 immagine'>
-                                    <button type='button' onclick="location.href = '/gestione/elimina/proposta/{{proposta.prodotto.idModello}}?taglia={{proposta.taglia.taglia}}'" class='position-absolute btn btn-danger'><i class="bi bi-trash-fill"></i></button>
+                                    <div class='position-absolute'>
+                                        <button type='button' onclick="location.href = '/gestione/elimina/proposta/{{proposta.prodotto.idModello}}?taglia={{proposta.taglia.taglia}}'" class='btn btn-danger'><i class="bi bi-trash-fill"></i></button>
+                                        <button type='button' onclick="location.href = '/gestione/informazioni/proposta/{{proposta.prodotto.idModello}}?taglia={{proposta.taglia.taglia}}'" class='btn btn-secondary'><i class="bi bi-receipt"></i></button>
+                                    </div>
                                     <div class='box'>
                                         <img src='{{ proposta.prodotto.immagine }}'>
                                     </div>
@@ -102,7 +111,10 @@
                             <hr>
                             <div class='row mb-1 item'>
                                 <div class='col-lg-4 col-12 immagine'>
-                                    <button type='button' onclick="location.href = '/gestione/elimina/offerta/{{offerta.prodotto.idModello}}?taglia={{offerta.taglia.taglia}}'" class='position-absolute btn btn-danger'><i class="bi bi-trash-fill"></i></button>
+                                    <div class='position-absolute'>
+                                        <button type='button' onclick="location.href = '/gestione/elimina/offerta/{{offerta.prodotto.idModello}}?taglia={{offerta.taglia.taglia}}'" class=' btn btn-danger'><i class="bi bi-trash-fill"></i></button>
+                                        <button type='button' onclick="location.href = '/gestione/informazioni/offerta/{{offerta.prodotto.idModello}}?taglia={{offerta.taglia.taglia}}'" class=' btn btn-secondary'><i class="bi bi-receipt"></i></button>
+                                    </div>
                                     <div class='box'>
                                         <img src='{{ offerta.prodotto.immagine }}'>
                                     </div>
