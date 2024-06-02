@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import *
 from HypeMarket.forms import *
+from datetime import timedelta
 
 
 def checkTaglia(request,prodotto):
@@ -232,3 +233,44 @@ def eliminaOfferta(request,idModello):
         return redirect(url)
     else:
         return redirect(url)
+    
+def informazioni(request,tipo,idModello):
+    prodotto = Prodotto.objects.get(idModello=idModello)
+    utente=request.user
+    taglia = checkTaglia(request,prodotto)
+    ctx={
+        'prodotto':prodotto,
+        'taglia':taglia,
+        'scadenza':None,
+        'indirizzo':None,
+        'carta':None,
+        'banca':None,
+        'informazioni':True,
+        'offerta':None,
+        'proposta':None,
+        'vendita':None,
+        'acquisto':None
+    }
+    if tipo == 'offerta':
+        offerta = Offerta.objects.filter(prodotto=prodotto,utente=utente,taglia=taglia).first()
+        ctx['offerta']=offerta
+        ctx['carta'] = offerta.carta
+        ctx['indirizzo'] = offerta.indirizzoSpedizione
+    elif tipo == 'proposta':
+        proposta = Proposta.objects.filter(prodotto=prodotto,utente=utente,taglia=taglia).first()
+        ctx['proposta'] = proposta
+        ctx['banca'] = proposta.banca
+        ctx['indirizzo'] = proposta.indirizzoFatturazione
+    elif tipo == 'vendita':
+        vendita = Vendita.objects.filter(prodotto=prodotto,utente=utente,taglia=taglia).first()
+        ctx['scadenza']= vendita.data
+        ctx['vendita'] = vendita
+        ctx['banca'] = vendita.banca
+        ctx['indirizzo'] = vendita.indirizzoFatturazione
+    elif tipo == 'acquisto':
+        acquisto = Acquisto.objects.filter(prodotto=prodotto,utente=utente,taglia=taglia).first()
+        ctx['scadenza']= acquisto.data + timedelta(days=10)
+        ctx['acquisto'] = acquisto
+        ctx['carta'] = acquisto.carta
+        ctx['indirizzo'] = acquisto.indirizzoSpedizione
+    return render(request,template_name='gestione/gestione.html',context=ctx)

@@ -15,7 +15,7 @@
             <div class='col-lg-2'></div>
             <div class='col-lg-8'>
                 <div class='row'>
-                    <div class='col-12 text-center'>
+                    <div class='col-12 text-center mt-4'>
                         <h2>
                             {% if offerta %}
                                 Offerta
@@ -23,6 +23,8 @@
                                 Vendita
                             {% elif proposta %}
                                 Proposta
+                            {% elif acquisto %}
+                                Acquisto
                             {% endif %}
                         </h2>
                         <br>
@@ -32,23 +34,35 @@
                         <h6>ID: {{ prodotto.idModello }}</h6>
                         <br>
                         <h4><b>
-                            {% if vendita %}
-                                PAYOUT: {{taglia.offertaMaggiore.prezzo}} €
-                            {% elif acquisto %}
-                                PREZZO: {{taglia.propostaMinore.prezzo}} €
-                            {% elif offerta %}
-                                {% if taglia.offertaMaggiore != None%}
-                                    OFFERTA PIÙ ALTA: {{taglia.offertaMaggiore.prezzo}} €
-                                {% else %}
-                                    NON È PRESENTE ALCUNA OFFERTA
+                            {% if informazioni %}
+                                {% if vendita %}
+                                    PAYOUT: {{vendita.prezzo}} €
+                                {% elif acquisto %}
+                                    PREZZO: {{acquisto.prezzo}} €
+                                {% elif offerta %}
+                                    PREZZO: {{offerta.prezzo}} €
+                                {% elif proposta %}
+                                    PAYOUT: {{proposta.prezzo}} €
                                 {% endif %}
-                            {% elif proposta %}
-                                {% if taglia.propostaMinore != None%}
-                                    PROPOSTA PIÙ BASSA: {{taglia.propostaMinore.prezzo}} €
-                                {% else %}
-                                    NON È PRESENTE ALCUNA PROPOSTA
-                                {% endif %}
-                            {% endif %} 
+                            {% else %}
+                                {% if vendita %}
+                                    PAYOUT: {{taglia.offertaMaggiore.prezzo}} €
+                                {% elif acquisto %}
+                                    PREZZO: {{taglia.propostaMinore.prezzo}} €
+                                {% elif offerta %}
+                                    {% if taglia.offertaMaggiore != None%}
+                                        OFFERTA PIÙ ALTA: {{taglia.offertaMaggiore.prezzo}} €
+                                    {% else %}
+                                        NON È PRESENTE ALCUNA OFFERTA
+                                    {% endif %}
+                                {% elif proposta %}
+                                    {% if taglia.propostaMinore != None%}
+                                        PROPOSTA PIÙ BASSA: {{taglia.propostaMinore.prezzo}} €
+                                    {% else %}
+                                        NON È PRESENTE ALCUNA PROPOSTA
+                                    {% endif %}
+                                {% endif %} 
+                            {% endif %}
                         </b></h4>
                     </div>
                     <div class='row mt-4'>
@@ -125,36 +139,55 @@
                         </div>
                     </div>
                     <div class='col-12 text-center'>
-                        {%if vendita %}
-                            <h5> !!! IMPORTANTE !!! </h5>
-                            <h6> ** È NECESSARIO SPEDIRE IL PRODOTTO ENTRO 3 GIORNI LAVORATIVI **</h6>
-                        {%elif acquisto %}
-                            <h6> ** ARRIVO STIMATO 5-10 GIORNI LAVORATIVI **</h6>
+                        {% if informazioni %}
+                            {% if vendita %}
+                                <h5> SPEDISCI ENTRO: {{scadenza}}</h5>
+                            {% elif acquisto %}
+                                <h5> ARRIVO ENTRO: {{scadenza}}</h5>
+                            {% endif %}
+                        {% else %}
+                            {%if vendita %}
+                                <h5> !!! IMPORTANTE !!! </h5>
+                                <h6> ** È NECESSARIO SPEDIRE IL PRODOTTO ENTRO 3 GIORNI LAVORATIVI **</h6>
+                            {%elif acquisto %}
+                                <h6> ** ARRIVO STIMATO 5-10 GIORNI LAVORATIVI **</h6>
+                            {%endif%}
                         {%endif%}
                     </div>
-                        
-                    <div class='col-12 text-center'>
-                        <form method='post'> {% csrf_token %}
-                            {{form|crispy}}
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <div class='alert alert-danger' id='message' role='alert'>{{ message }}</div>
-                                {% endfor %}
-                            {% endif %}
-                            <button type='button' class='pulsanti btn btn-danger w-10' onclick="window.location.href='/sneakers/{{ prodotto.idModello }}'" ><i class="bi bi-arrow-left"></i></button>
-                            <button type='submit' class='pulsanti btn btn-dark w-25'>
-                                {%if vendita%}
-                                    VENDI
-                                {%elif acquisto%}
-                                    ACQUISTA
-                                {%elif offerta%}
-                                    OFFRI
-                                {%elif proposta%}
-                                    PROPONI
-                                {%endif%}
-                            </button>
-                        </form>
-                    </div>
+                    {% if not informazioni %}
+                        <div class='col-12 text-center'>
+                            <form method='post'> {% csrf_token %}
+                                {{form|crispy}}
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class='alert alert-danger' id='message' role='alert'>{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                                <button type='button' class='pulsanti btn btn-danger w-10' onclick="window.location.href='/sneakers/{{ prodotto.idModello }}'" ><i class="bi bi-arrow-left"></i></button>
+                                <button type='submit' class='pulsanti btn btn-dark w-25'>
+                                    {%if vendita%}
+                                        VENDI
+                                    {%elif acquisto%}
+                                        ACQUISTA
+                                    {%elif offerta%}
+                                        OFFRI
+                                    {%elif proposta%}
+                                        PROPONI
+                                    {%endif%}
+                                </button>
+                            </form>
+                        </div>
+                    {% else %}
+                        {% if vendita %}
+                            <div class='col-12 text-center'>
+                                <button type='button' class='pulsanti btn btn-danger w-25 mt-4' onclick="window.location.href='/utente/acquisti'" ><i class="bi bi-arrow-left"></i></button>
+                            </div>
+                        {% elif acquisto %}
+                            <div class='col-12 text-center'>
+                                <button type='button' class='pulsanti btn btn-danger w-25 mt-4' onclick="window.location.href='/utente/vendite'" ><i class="bi bi-arrow-left"></i></button>
+                            </div>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
             <div class='col-lg-2'></div>

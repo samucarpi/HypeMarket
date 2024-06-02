@@ -225,13 +225,16 @@
                     text: stringa,
                 });
             }
+            return true;
         }
 
         datiMancanti( $('#spedizione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di spedizione');
         datiMancanti( $('#carta'),'Prima di eseguire l\'azione, inserire i dati della carta di credito');
         datiMancanti( $('#fatturazione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di fatturazione');
         datiMancanti( $('#banca'),'Prima di eseguire l\'azione, inserire i dati del conto bancario');
-
+        datiMancanti( $('#corrispondenteAcquisto'),'Impossibile acquistare il prodotto, la proposta più bassa è la tua');
+        datiMancanti( $('#corrispondenteVendita'),'Impossibile vendere il prodotto, l\'offerta più alta è la tua');
+        
         $('#offri').on('click', function() {
             if(checkEta()){
                 var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
@@ -255,7 +258,6 @@
     
         $('#vendi').on('click', function() {
             if(checkEta()){
-                datiMancanti( $('#corrispondenteVendita'),'Impossibile vendere il prodotto, l\'offerta più alta è la tua');
                 var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
                 var prodotto = '{{ prodotto.idModello}}'
                 var offerta = $('input[type="checkbox"]:checked').next().children().children().last().text().trim();
@@ -274,7 +276,6 @@
 
         $('#acquista').on('click', function() {
             if(checkEta()){
-                datiMancanti( $('#corrispondenteAcquisto'),'Impossibile acquistare il prodotto, la proposta più bassa è la tua');
                 var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
                 var prodotto = '{{ prodotto.idModello}}'
                 var proposta = $('input[type="checkbox"]:checked').next().children().children().first().next().text().trim();
