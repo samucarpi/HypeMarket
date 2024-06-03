@@ -52,3 +52,9 @@ class CartaCredito(models.Model):
 class Wishlist(models.Model):
     utente=models.ForeignKey(Utente,related_name='wishlist', on_delete=models.CASCADE)
     prodotti = models.ManyToManyField(Prodotto)
+
+class Recensione(models.Model):
+    utente=models.ForeignKey(Utente,related_name='recensioni', on_delete=models.CASCADE)
+    prodotto=models.ForeignKey(Prodotto,related_name='recensioni', on_delete=models.CASCADE)
+    testo=models.TextField()
+    voto=models.IntegerField()

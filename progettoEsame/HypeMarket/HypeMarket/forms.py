@@ -317,3 +317,31 @@ class Cerca(forms.Form):
             Field('stringa', css_class='form-control', placeholder='Cerca'),
             Submit('submit', 'Cerca', css_class='btn btn-primary'),
         )
+
+class RecensioneForm(forms.ModelForm):
+    class Meta:
+        model = Recensione
+        fields = ['voto','testo']
+
+    voto=forms.IntegerField(widget=forms.IntegerField(), max_length=50)
+    testo=forms.CharField(widget=forms.Textarea(), max_length=500)
+
+    def __init__(self, *args, **kwargs):
+        super(RecensioneForm, self).__init__(*args, **kwargs)
+        helper = FormHelper()
+        helper.form_id = 'form-recensione'
+        helper.form_method = 'POST'
+        helper.layout = Layout(
+            Field('voto', css_class='form-control'),
+            Field('testo', css_class='form-control'),
+            Submit('submit', 'Invia', css_class='btn btn-primary'),
+        )
+
+    def save(self, commit=True, utente=None, prodotto=None):
+        recensione = super().save(commit=False)
+        if utente:
+            recensione.utente = utente
+            recensione.prodotto = prodotto
+        if commit:
+            recensione.save()
+        return recensione

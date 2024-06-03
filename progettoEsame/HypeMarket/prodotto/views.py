@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import *
 from utente.models import *
 from HypeMarket.forms import *
+from utente.views import getWishlist
 
 def paginazione(request, prodotti, url, titolo):
     paginaMax = int(len(prodotti) / 24 + 1)
@@ -13,10 +14,8 @@ def paginazione(request, prodotti, url, titolo):
         pagina = paginaMax
     selezioneInizo = (pagina - 1) * 24
     selezioneFine = pagina * 24
-    utente = request.user
-    wishlist = None
-    if utente.is_authenticated:
-        wishlist = Wishlist.objects.filter(utente=utente).first().prodotti.all()
+    wishlist = getWishlist(request).prodotti.all()
+    
 
     ctx = {
         'title': titolo,
@@ -37,7 +36,7 @@ def catalogo(request):
     templ = 'prodotto/prodotti.html'
     
     prodotti=Prodotto.objects.all()
-    url = '/catalogo'
+    url = '/sneakers/catalogo'
 
     ctx = paginazione(request, prodotti, url, 'Catalogo')
 
@@ -63,9 +62,7 @@ def prodotto(request,idModello):
     utente = request.user
     eta=None
 
-    wishlist=None
-    if utente.is_authenticated:
-        wishlist = Wishlist.objects.filter(utente=utente).first().prodotti.all()
+    wishlist=getWishlist(request).prodotti.all()
 
     if utente.is_authenticated:
         if utente.dataNascita is not None:

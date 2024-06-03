@@ -23,4 +23,5 @@ urlpatterns = [
     path('wishlist', wishlist, name='Preferiti'),
     path('vendite', vendite, name='Vendite'),
     path('acquisti', acquisti, name='Acquisti'),
+    path('recensione/<str:idModello>', recensione, name='Recensione'),
 ]

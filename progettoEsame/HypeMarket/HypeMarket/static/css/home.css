@@ -1,0 +1,23 @@
+#catalogo{
+    overflow-x: hidden;
+}
+.imgProd{
+    width: 80%;
+    margin: auto;
+}
+.col{
+    border: 1px solid #c1c1c1;
+    border-radius: 20px;
+}
+.titoloProd{
+    margin: auto;
+    font-weight: 500;
+    font-size: small;
+    text-align: center;
+    width: 60%;
+}
+.naviga{
+    margin: auto;
+    margin-top: 20px;
+    text-align: center;
+}

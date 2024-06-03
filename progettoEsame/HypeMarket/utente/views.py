@@ -233,6 +233,13 @@ def elimina(request,tipo):
         return redirect('utente:Login')
     return redirect('utente:Account')
 
+def getWishlist(request):
+    utente = request.user
+    wishlist = None
+    if utente.is_authenticated:
+        wishlist = Wishlist.objects.filter(utente=utente).first()
+    return wishlist
+
 @login_required(login_url='utente:Login')
 def aggiungiPreferiti(request,idModello):
     url=request.META.get('HTTP_REFERER', '/').split('?')[0]
@@ -243,9 +250,8 @@ def aggiungiPreferiti(request,idModello):
             pagina=1
         url=url +'?p='+str(pagina)
     
-    utente = request.user
     prodotto=Prodotto.objects.filter(idModello=idModello).first()
-    wishlist = Wishlist.objects.filter(utente=utente).first()
+    wishlist = getWishlist(request)
     if prodotto not in wishlist.prodotti.all():
         wishlist.prodotti.add(prodotto)
         wishlist.save()
@@ -257,19 +263,18 @@ def aggiungiPreferiti(request,idModello):
 @login_required(login_url='utente:Login')
 def wishlist(request):
     templ = 'utente/wishlist.html'
-    utente = request.user
+    wishlist = getWishlist(request)
     try:
         pagina=int(request.GET.get('p'))
     except:
         pagina=1
-    paginaMax=int(len(Wishlist.objects.filter(utente=utente).first().prodotti.all())/24+1)
+    paginaMax=int(len(wishlist.prodotti.all())/24+1)
     selezioneInizo=(pagina-1)*24
     selezioneFine=pagina*24
-    wishlist=Wishlist.objects.filter(utente=utente).first().prodotti.all()[selezioneInizo:selezioneFine]
+    wishlist=wishlist.prodotti.all()[selezioneInizo:selezioneFine]
     
     ctx = {
         'title':'Wishlist',
-        'wishlist': wishlist, 
         'pagina':pagina,
         'paginaPiu1':pagina+1,
         'paginaPiu2':pagina+2,
@@ -309,3 +314,20 @@ def acquisti(request):
     }
 
     return render(request,template_name=templ,context=ctx)
+
+@login_required(login_url='utente:Login')
+def recensione(request,idModello):
+    templ = 'utente/recensione.html'
+    utente = request.user
+    prodotto = Prodotto.objects.filter(idModello=idModello).first()
+    url=request.META.get('HTTP_REFERER', '/')
+    if request.method == 'POST':
+        form = RecensioneForm(request.POST)
+        if form.is_valid():
+            
+            return redirect(url)
+        else:
+            return render(request,template_name=templ,context={'form':form})
+    else:
+        form = RecensioneForm()
+        return render(request,template_name=templ,context={'form':form})

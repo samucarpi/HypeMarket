@@ -178,11 +178,16 @@
                             </form>
                         </div>
                     {% else %}
-                        {% if vendita %}
+                        {% if  acquisto or offerta %}
+                            {% if acquisto %}
+                                <div class='col-12 text-center'>
+                                    <button type='button' class='pulsanti btn btn-dark w-50 mt-4' onclick="window.location.href='/utente/recensione/{{prodotto.idModello}}'" ><i class="bi bi-pencil-square"></i> Recensisci</button>
+                                </div>
+                            {% endif %}
                             <div class='col-12 text-center'>
                                 <button type='button' class='pulsanti btn btn-danger w-25 mt-4' onclick="window.location.href='/utente/acquisti'" ><i class="bi bi-arrow-left"></i></button>
                             </div>
-                        {% elif acquisto %}
+                        {% elif vendita or proposta %}
                             <div class='col-12 text-center'>
                                 <button type='button' class='pulsanti btn btn-danger w-25 mt-4' onclick="window.location.href='/utente/vendite'" ><i class="bi bi-arrow-left"></i></button>
                             </div>

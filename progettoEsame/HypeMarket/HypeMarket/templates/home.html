@@ -12,69 +12,65 @@
 {{block.super}}
     <div class='container'>
         <div class='row mt-4'>
-            <div class='row'>
-                <div class='col-1'></div>
-                <div class='col-10'>
-                    <div id="slider" class="carousel slide">
-                        <div class="carousel-indicators">
-                            <button type="button" data-bs-target="#slider" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#slider" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                            <button type="button" data-bs-target="#slider" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <div class='col-2'></div>
+            <div class='col-8'>
+                <img src="{% static '/img/logo.png' %}" class='img-fluid' alt='logo'>
+                <h2 class='text-center mt-5'> Cerca le tue sneakers preferite! </h2>
+                <form method='post'> {% csrf_token %}
+                    <div class='row mt-5'>
+                        <div class='col-10'>
+                            <div>{{form|crispy}}</div>
                         </div>
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <a href='/sneakers/HF6061-400/' class='text-reset text-decoration-none'>
-                                    <img src="{% static '/img/futura.jpg' %}" class="d-block w-100" alt="...">
-                                    <div class="carousel-caption d-none d-md-block">
-                                    <h3>Nike SB Dunk Low Futura Laboratories Bleached Aqua</h3>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <a href='/sneakers/FN0344-001/' class='text-reset text-decoration-none'>
-                                <img src="{% static '/img/balvin.jpeg' %}" class="d-block w-100" alt="...">
-                                <div class="carousel-caption d-none d-md-block text-black">
-                                    <h3>Jordan 3 Retro J Balvin Rio</h3>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="carousel-item">
-                            <a href='/sneakers/DZ4137-700' class='text-reset text-decoration-none'>
-                                <img src="{% static '/img/travis.png' %}" class="d-block w-100" alt="...">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h3>Jordan 1 Retro Low OG SP Travis Scott Canary</h3>
-                                </div>
-                            </a>
+                        <div class='col-2'>
+                            <button type='submit' class='pulsanti btn btn-dark w-100' ><i class="bi bi-search"></i></button>
                         </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#slider" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#slider" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-                <div class='col-1'></div>
+                </form>
             </div>
-            <div class='row'>
-                <div class='col-2'></div>
-                <div class='col-8'>
-                    <h2 class='text-center mt-5'> Cerca le tue sneakers preferite! </h2>
-                    <form method='post'> {% csrf_token %}
-                        <div class='row mt-5'>
-                            <div class='col-10'>
-                                <div>{{form|crispy}}</div>
-                            </div>
-                            <div class='col-2'>
-                                <button type='submit' class='pulsanti btn btn-dark w-100' ><i class="bi bi-search"></i></button>
-                            </div>
+            <div class='col-2'></div>
+            <h3> Le più acquistate </h3>
+            <div class='row mt-3'>
+                {% for topSeller in topSellers %}
+                    <div class='col-3'>
+                        {% if wishlist %}
+                            {% for prodotto in wishlist %}
+                                {% if prodotto.idModello == topSeller.prodotto.idModello %}
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{topSeller.prodotto.idModello}}'> <i class="h4 bi bi-heart-fill"></i> </a>
+                                {% else %}
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{topSeller.prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
+                                {% endif %}
+                            {% endfor %}
+                        {%else%}
+                            <a class='cuore position-absolute' href='/utente/preferiti/{{topSeller.prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
+                        {% endif %}
+                        <div class='row text-center'>
+                            <a href='/sneakers/{{topSeller.prodotto.idModello}}'><img src='{{ topSeller.prodotto.immagine }}' class='imgProd'></a>
+                            <p class='titoloProd'>{{ topSeller.prodotto.titolo }}</p>
                         </div>
-                    </form>
-                </div>
-                <div class='col-2'></div>
+                    </div>
+                {% endfor%}
             </div>
+            <h3 class='mt-5'> Quelle con voti più alti </h3>
+            <div class='row mt-3 mb-5'>
+                {% for prodotto in topRated %}
+                    <div class='col-3'>
+                        {% if wishlist %}
+                            {% for prodotto in wishlist %}
+                                {% if prodotto.idModello == prodotto.idModello %}
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}'> <i class="h4 bi bi-heart-fill"></i> </a>
+                                {% else %}
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
+                                {% endif %}
+                            {% endfor %}
+                        {%else%}
+                            <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
+                        {% endif %}
+                        <div class='row text-center'>
+                            <a href='/sneakers/{{prodotto.idModello}}'><img src='{{ prodotto.immagine }}' class='imgProd'></a>
+                            <p class='titoloProd'>{{ prodotto.titolo }}</p>
+                        </div>
+                    </div>
+                {% endfor%}
+            </div>                      
         </div>
-    </div>
 {% endblock %}
