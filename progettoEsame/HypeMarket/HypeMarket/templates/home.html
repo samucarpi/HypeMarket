@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {% load crispy_forms_tags %}
+    {% load static %}
+    <link rel='stylesheet' href="{% static '/css/home.css' %}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+{{block.super}}
+    <div class='container'>
+        <div class='row mt-4'>
+            <div class='row'>
+                <div class='col-1'></div>
+                <div class='col-10'>
+                    <div id="slider" class="carousel slide">
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#slider" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                            <button type="button" data-bs-target="#slider" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                            <button type="button" data-bs-target="#slider" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                        </div>
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <a href='/sneakers/HF6061-400/' class='text-reset text-decoration-none'>
+                                    <img src="{% static '/img/futura.jpg' %}" class="d-block w-100" alt="...">
+                                    <div class="carousel-caption d-none d-md-block">
+                                    <h3>Nike SB Dunk Low Futura Laboratories Bleached Aqua</h3>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <a href='/sneakers/FN0344-001/' class='text-reset text-decoration-none'>
+                                <img src="{% static '/img/balvin.jpeg' %}" class="d-block w-100" alt="...">
+                                <div class="carousel-caption d-none d-md-block text-black">
+                                    <h3>Jordan 3 Retro J Balvin Rio</h3>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="carousel-item">
+                            <a href='/sneakers/DZ4137-700' class='text-reset text-decoration-none'>
+                                <img src="{% static '/img/travis.png' %}" class="d-block w-100" alt="...">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h3>Jordan 1 Retro Low OG SP Travis Scott Canary</h3>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#slider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#slider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                <div class='col-1'></div>
+            </div>
+            <div class='row'>
+                <div class='col-2'></div>
+                <div class='col-8'>
+                    <h2 class='text-center mt-5'> Cerca le tue sneakers preferite! </h2>
+                    <form method='post'> {% csrf_token %}
+                        <div class='row mt-5'>
+                            <div class='col-10'>
+                                <div>{{form|crispy}}</div>
+                            </div>
+                            <div class='col-2'>
+                                <button type='submit' class='pulsanti btn btn-dark w-100' ><i class="bi bi-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class='col-2'></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

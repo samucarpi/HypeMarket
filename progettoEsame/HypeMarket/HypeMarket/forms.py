@@ -302,3 +302,18 @@ class AcquistoForm(AcquistoVendita):
         if commit:
             acquisto.save()
         return acquisto
+
+class Cerca(forms.Form):
+    
+    stringa=forms.CharField(widget=forms.TextInput(attrs={'class': 'pulsanti'}), max_length=25)
+    stringa.label = ''
+
+    def __init__(self, *args, **kwargs):
+        super(Cerca, self).__init__(*args, **kwargs)
+        helper = FormHelper()
+        helper.form_show_labels = False
+        helper.form_id = 'form-cerca'
+        helper.layout = Layout(
+            Field('stringa', css_class='form-control', placeholder='Cerca'),
+            Submit('submit', 'Cerca', css_class='btn btn-primary'),
+        )

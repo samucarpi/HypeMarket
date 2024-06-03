@@ -3,32 +3,43 @@ from .models import *
 from utente.models import *
 from HypeMarket.forms import *
 
-def catalogo(request):
+def paginazione(request, prodotti, url, titolo):
+    paginaMax = int(len(prodotti) / 24 + 1)
     try:
-        pagina=int(request.GET.get('p'))
+        pagina = int(request.GET.get('p'))
     except:
-        pagina=1
-    paginaMax=int(len(Prodotto.objects.all())/24+1)
-    selezioneInizo=(pagina-1)*24
-    selezioneFine=pagina*24
-    catalogo=Prodotto.objects.all()[selezioneInizo:selezioneFine]
-
-    templ = 'prodotto/catalogo.html'
-    utente=request.user
-    wishlist=None
+        pagina = 1
+    if pagina > paginaMax:
+        pagina = paginaMax
+    selezioneInizo = (pagina - 1) * 24
+    selezioneFine = pagina * 24
+    utente = request.user
+    wishlist = None
     if utente.is_authenticated:
         wishlist = Wishlist.objects.filter(utente=utente).first().prodotti.all()
-    
+
     ctx = {
-        'title':'Catalogo',
-        'catalogo': catalogo, 
-        'pagina':pagina,
-        'paginaPiu1':pagina+1,
-        'paginaPiu2':pagina+2,
-        'paginaMeno1':pagina-1,
-        'paginaMax':paginaMax,
-        'wishlist':wishlist
+        'title': titolo,
+        'prodotti': prodotti[selezioneInizo:selezioneFine], 
+        'pagina': pagina,
+        'paginaPiu1': pagina + 1,
+        'paginaPiu2': pagina + 2,
+        'paginaMeno1': pagina - 1,
+        'paginaMax': paginaMax,
+        'url': url,
+        'wishlist': wishlist
     }
+
+    return ctx
+
+
+def catalogo(request):
+    templ = 'prodotto/prodotti.html'
+    
+    prodotti=Prodotto.objects.all()
+    url = '/catalogo'
+
+    ctx = paginazione(request, prodotti, url, 'Catalogo')
 
     return render(request,template_name=templ,context=ctx)
 

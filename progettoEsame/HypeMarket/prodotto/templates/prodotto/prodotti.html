@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {% load static %}
+    <link rel='stylesheet' href="{% static '/css/catalogo.css' %}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+{{block.super}}
+    <div id='catalogo' class='container mt-4'>
+        <div class='row'>
+            <div class='col-12'>
+                <div class='row'>
+                    {% if prodotti %}
+                        {% for prod in prodotti %}
+                            <div class='col-3'>
+                                {% if wishlist %}
+                                    {% for prodotto in wishlist %}
+                                        {% if prodotto.idModello == prod.idModello %}
+                                            <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?p={{pagina}}'> <i class="h4 bi bi-heart-fill"></i> </a>
+                                        {% else %}
+                                            <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?p={{pagina}}'> <i class="h4 bi bi-heart"></i> </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                {%else%}
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{prod.idModello}}?p={{pagina}}'> <i class="h4 bi bi-heart"></i> </a>
+                                {% endif %}
+                                <div class='row text-center'>
+                                    <a href='/sneakers/{{prod.idModello}}'><img src='{{ prod.immagine }}' class='imgProd'></a>
+                                </div>
+                                <p class='titoloProd'>{{ prod.titolo }}</p>
+                            </div>
+                        {% endfor %}
+                        <div class='col-12'>
+                            <nav class='naviga d-flex justify-content-center'>
+                                <ul class='pagination'>
+                                    {% if pagina == 1 %}
+                                        <li class='page-item disabled'><a class='page-link'><i class='bi bi-arrow-left'></i></a></li>
+                                    {% else %}
+                                        <li class='page-item'><a class='page-link' href='{{url}}?p={{paginaMeno1}}'><i class='bi bi-arrow-left'></i></a></li>
+                                    {% endif %}
+                                    <li class='page-item active'><a class='page-link' href='{{url}}?p={{pagina}}'>{{pagina}}</a></li>
+            
+                                    {% if paginaPiu1 <= paginaMax %}
+                                        <li class='page-item'><a class='page-link' href='{{url}}?p={{paginaPiu1}}'>{{paginaPiu1}}</a></li>
+                                    {% endif %}
+            
+                                    {% if paginaPiu2 <= paginaMax %}
+                                        <li class='page-item'><a class='page-link' href='{{url}}?p={{paginaPiu2}}'>{{paginaPiu2}}</a></li>
+                                    {% endif %}
+            
+                                    {% if pagina == paginaMax %}
+                                        <li class='page-item disabled' ><a class='page-link' ><i class='bi bi-arrow-right'></i></a></li>
+                                    {% else %}
+                                        <li class='page-item'><a class='page-link' href='{{url}}?p={{paginaPiu1}}'><i class='bi bi-arrow-right'></i></a></li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    {% else %}
+                        <h2 class='text-center'>Nessun prodotto trovato</h2>
+                        <button class='btn btn-dark d-block mx-auto mt-5 w-25 h-100' onclick='window.location.href="/home"'>Torna alla home</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
