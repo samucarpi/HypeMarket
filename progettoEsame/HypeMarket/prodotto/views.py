@@ -14,9 +14,12 @@ def paginazione(request, prodotti, url, titolo):
         pagina = paginaMax
     selezioneInizo = (pagina - 1) * 24
     selezioneFine = pagina * 24
-    wishlist = getWishlist(request).prodotti.all()
+    wishlist = getWishlist(request)
+    try:
+        wishlist=getWishlist(request).prodotti.all()
+    except:
+        wishlist=None
     
-
     ctx = {
         'title': titolo,
         'prodotti': prodotti[selezioneInizo:selezioneFine], 
@@ -34,8 +37,17 @@ def paginazione(request, prodotti, url, titolo):
 
 def catalogo(request):
     templ = 'prodotto/prodotti.html'
+
+    wishlist = getWishlist(request)
+    try:
+        wishlistProd = wishlist.prodotti.all()
+    except:
+        wishlistProd = None
+
+    wishlistOut = Prodotto.objects.exclude(id__in=wishlistProd.values('id'))
+
+    prodotti = list(wishlistProd)+list(wishlistOut)
     
-    prodotti=Prodotto.objects.all()
     url = '/sneakers/catalogo'
 
     ctx = paginazione(request, prodotti, url, 'Catalogo')
@@ -45,24 +57,28 @@ def catalogo(request):
 def prodotto(request,idModello):
     templ = 'prodotto/prodotto.html'
 
-    for taglia in Taglia.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello)):
+    prodotto=Prodotto.objects.get(idModello=idModello)
+
+    for taglia in Taglia.objects.filter(prodotto=prodotto):
         taglia.propostaMinore = None
         taglia.offertaMaggiore = None
         
-        if Proposta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').exists():
-            proposta = Proposta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').first()
+        if Proposta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').exists():
+            proposta = Proposta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').first()
             taglia.propostaMinore = proposta
-        if Offerta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').exists():
-            offerta = Offerta.objects.filter(prodotto=Prodotto.objects.get(idModello=idModello),taglia=taglia).order_by('prezzo').last()
+        if Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').exists():
+            offerta = Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').last()
             taglia.offertaMaggiore = offerta
 
         Taglia.save(taglia)
 
-    prodotto=Prodotto.objects.get(idModello=idModello)
     utente = request.user
     eta=None
 
-    wishlist=getWishlist(request).prodotti.all()
+    try:
+        wishlist=getWishlist(request).prodotti.all()
+    except:
+        wishlist=None
 
     if utente.is_authenticated:
         if utente.dataNascita is not None:

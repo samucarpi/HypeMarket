@@ -15,3 +15,4 @@ urlpatterns = [
  
 #erase_db()
 #init_db()
+#Recensione.objects.all().delete()

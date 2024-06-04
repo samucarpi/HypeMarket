@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     'gestione',
     'crispy_forms',
     'crispy_bootstrap5',
-    'django_countries'
+    'django_countries',
+    'django_starfield'
 ]
 
 MIDDLEWARE = [

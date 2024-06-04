@@ -10,7 +10,7 @@
 
 {% block content %}
 {{block.super}}
-    <div class='container' style='white-space: nowrap;'>
+    <div class='container'>
         <div class='row'> 
             <div class='col-lg-2'></div>
             <div class='col-lg-8'>
@@ -25,6 +25,8 @@
                                 Proposta
                             {% elif acquisto %}
                                 Acquisto
+                            {% elif recensione %}
+                                Recensione
                             {% endif %}
                         </h2>
                         <br>
@@ -33,38 +35,41 @@
                         <h6>Taglia: {{ taglia.taglia }}</h6>
                         <h6>ID: {{ prodotto.idModello }}</h6>
                         <br>
-                        <h4><b>
-                            {% if informazioni %}
-                                {% if vendita %}
-                                    PAYOUT: {{vendita.prezzo}} €
-                                {% elif acquisto %}
-                                    PREZZO: {{acquisto.prezzo}} €
-                                {% elif offerta %}
-                                    PREZZO: {{offerta.prezzo}} €
-                                {% elif proposta %}
-                                    PAYOUT: {{proposta.prezzo}} €
+                        {% if not recensione %}
+                            <h4><b>
+                                {% if informazioni %}
+                                    {% if vendita %}
+                                        PAYOUT: {{vendita.prezzo}} €
+                                    {% elif acquisto %}
+                                        PREZZO: {{acquisto.prezzo}} €
+                                    {% elif offerta %}
+                                        PREZZO: {{offerta.prezzo}} €
+                                    {% elif proposta %}
+                                        PAYOUT: {{proposta.prezzo}} €
+                                    {% endif %}
+                                {% else %}
+                                    {% if vendita %}
+                                        PAYOUT: {{taglia.offertaMaggiore.prezzo}} €
+                                    {% elif acquisto %}
+                                        PREZZO: {{taglia.propostaMinore.prezzo}} €
+                                    {% elif offerta %}
+                                        {% if taglia.offertaMaggiore != None%}
+                                            OFFERTA PIÙ ALTA: {{taglia.offertaMaggiore.prezzo}} €
+                                        {% else %}
+                                            NON È PRESENTE ALCUNA OFFERTA
+                                        {% endif %}
+                                    {% elif proposta %}
+                                        {% if taglia.propostaMinore != None%}
+                                            PROPOSTA PIÙ BASSA: {{taglia.propostaMinore.prezzo}} €
+                                        {% else %}
+                                            NON È PRESENTE ALCUNA PROPOSTA
+                                        {% endif %}
+                                    {% endif %} 
                                 {% endif %}
-                            {% else %}
-                                {% if vendita %}
-                                    PAYOUT: {{taglia.offertaMaggiore.prezzo}} €
-                                {% elif acquisto %}
-                                    PREZZO: {{taglia.propostaMinore.prezzo}} €
-                                {% elif offerta %}
-                                    {% if taglia.offertaMaggiore != None%}
-                                        OFFERTA PIÙ ALTA: {{taglia.offertaMaggiore.prezzo}} €
-                                    {% else %}
-                                        NON È PRESENTE ALCUNA OFFERTA
-                                    {% endif %}
-                                {% elif proposta %}
-                                    {% if taglia.propostaMinore != None%}
-                                        PROPOSTA PIÙ BASSA: {{taglia.propostaMinore.prezzo}} €
-                                    {% else %}
-                                        NON È PRESENTE ALCUNA PROPOSTA
-                                    {% endif %}
-                                {% endif %} 
-                            {% endif %}
-                        </b></h4>
+                            </b></h4>
+                        {% endif %}
                     </div>
+                    {% if not recensione %}
                     <div class='row mt-4'>
                         <div class='col-5'>
                             <div class='col-12 text-center mb-4'>
@@ -154,36 +159,46 @@
                             {%endif%}
                         {%endif%}
                     </div>
-                    {% if not informazioni %}
-                        <div class='col-12 text-center'>
-                            <form method='post'> {% csrf_token %}
-                                {{form|crispy}}
-                                {% if messages %}
-                                    {% for message in messages %}
-                                        <div class='alert alert-danger' id='message' role='alert'>{{ message }}</div>
-                                    {% endfor %}
-                                {% endif %}
-                                <button type='button' class='pulsanti btn btn-danger w-10' onclick="window.location.href='/sneakers/{{ prodotto.idModello }}'" ><i class="bi bi-arrow-left"></i></button>
-                                <button type='submit' class='pulsanti btn btn-dark w-25'>
-                                    {%if vendita%}
-                                        VENDI
-                                    {%elif acquisto%}
-                                        ACQUISTA
-                                    {%elif offerta%}
-                                        OFFRI
-                                    {%elif proposta%}
-                                        PROPONI
-                                    {%endif%}
-                                </button>
-                            </form>
-                        </div>
-                    {% else %}
-                        {% if  acquisto or offerta %}
-                            {% if acquisto %}
-                                <div class='col-12 text-center'>
-                                    <button type='button' class='pulsanti btn btn-dark w-50 mt-4' onclick="window.location.href='/utente/recensione/{{prodotto.idModello}}'" ><i class="bi bi-pencil-square"></i> Recensisci</button>
-                                </div>
+                    {% endif %}
+                    {% if not informazioni and not recensioneExists %}
+                    <div class='col-12 text-center'>
+                        <form method='post'> {% csrf_token %}
+                            {{form|crispy}}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class='alert alert-danger' id='message' role='alert'>{{ message }}</div>
+                                {% endfor %}
                             {% endif %}
+                            {%if recensione %}
+                                <button type='button' class='pulsanti btn btn-danger w-10' onclick="window.location.href='/utente/acquisti'" ><i class="bi bi-arrow-left"></i></button>
+                            {%else%}
+                                <button type='button' class='pulsanti btn btn-danger w-10' onclick="window.location.href='/sneakers/{{ prodotto.idModello }}'" ><i class="bi bi-arrow-left"></i></button>
+                            {%endif%}
+                            <button type='submit' class='pulsanti btn btn-dark w-25'>
+                                {%if vendita%}
+                                    VENDI
+                                {%elif acquisto%}
+                                    ACQUISTA
+                                {%elif offerta%}
+                                    OFFRI
+                                {%elif proposta%}
+                                    PROPONI
+                                {% elif recensione %}
+                                    RECENSISCI
+                                {%endif%}
+                            </button>
+                        </form>
+                    </div>
+                    {% elif recensioneExists %}
+                    <div class='col-12 text-center'>
+                        <h4> Voto: </h4>
+                        <div id='stelle'> </div>
+                        <h4 class='mt-4'> Commento: </h4>
+                        <div style='word-wrap: break-word;text-align:left; width:50%;margin:auto; border:1px solid #6b6565; padding:30px; border-radius:10px;'>{{ recensioneExists.testo }}</div>
+                        <button type='button' class='pulsanti btn btn-danger w-25 mt-4' onclick="window.location.href='/utente/acquisti'" ><i class="bi bi-arrow-left"></i></button>
+                    </div>
+                    {%else%}
+                        {% if  acquisto or offerta %}
                             <div class='col-12 text-center'>
                                 <button type='button' class='pulsanti btn btn-danger w-25 mt-4' onclick="window.location.href='/utente/acquisti'" ><i class="bi bi-arrow-left"></i></button>
                             </div>
@@ -193,9 +208,16 @@
                             </div>
                         {% endif %}
                     {% endif %}
-                </div>
+                    </div>
             </div>
             <div class='col-lg-2'></div>
         </div>
     </div>
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function() {
+            $('#stelle').append('<i class=" h3 text-warning bi bi-star-fill"></i>'.repeat({{ recensioneExists.voto }}));
+        });
+    </script>
 {% endblock %}

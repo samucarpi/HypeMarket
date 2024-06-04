@@ -5,8 +5,6 @@ from django.contrib import messages
 from HypeMarket.forms import *
 from datetime import datetime as time
 
-templModifica = 'utente/modifica.html'
-
 def checkPassword(form,request):
     if form.cleaned_data['password'] != form.cleaned_data['confermaPassword']:
         messages.error(request,'Password non corrispondenti')
@@ -99,72 +97,19 @@ def checkData(form,request):
         return True
     else:
         return True
-
-@login_required(login_url='utente:Login')
-def modificaInformazioni(request):
-    utente = request.user
-    if request.method == 'POST':
-        form = Informazioni(request.POST)
-        if form.is_valid() and checkData(form,request):
-            form.save(utente=utente)
-            return redirect('utente:Account')
-        else:
-            return render(request,template_name=templModifica,context={'form':form})
-    else:
-        form = Informazioni()
-        return render(request,template_name=templModifica,context={'form':form})
-
-@login_required(login_url='utente:Login')
-def modificaIndirizzoSpedizione(request):
-    utente = request.user
-    if request.method == 'POST':
-        form = Spedizione(request.POST)
-        if form.is_valid():
-            if IndirizzoSpedizione.objects.filter(utente=utente).exists():
-                IndirizzoSpedizione.objects.filter(utente=utente).delete()
-            form.save(utente=utente)
-            return redirect('utente:Account')
-        else:
-            return render(request,template_name=templModifica,context={'form':form})
-    else:
-        form = Spedizione()
-        return render(request,template_name=templModifica,context={'form':form})
     
-@login_required(login_url='utente:Login')
-def modificaIndirizzoFatturazione(request):
-    utente = request.user
-    if request.method == 'POST':
-        form = Fatturazione(request.POST)
-        if form.is_valid():
-            if IndirizzoFatturazione.objects.filter(utente=utente).exists():
-                IndirizzoFatturazione.objects.filter(utente=utente).delete()
-            form.save(utente=utente)
-            return redirect('utente:Account')
-        else:
-            return render(request,template_name=templModifica,context={'form':form})
-    else:
-        form = Fatturazione()
-        return render(request,template_name=templModifica,context={'form':form})
+def eliminaDatiEsistenti(tipo,utente):
+    if tipo.objects.filter(utente=utente).exists():
+        try:
+            tipo.objects.filter(utente=utente).first().delete()
+        except:
+            tipo.objects.filter(utente=utente).update(utente=None)
 
 def checkBanca(form,request):
     if len(form.cleaned_data['iban']) != 27:
         messages.error(request,'IBAN non valido')
         return False
     return True
-
-@login_required(login_url='utente:Login')
-def modificaBanca(request):
-    utente = request.user
-    if request.method == 'POST':
-        form = Banca(request.POST)
-        if form.is_valid() and checkBanca(form,request):
-            form.save(utente=utente)
-            return redirect('utente:Account')
-        else:
-            return render(request,template_name=templModifica,context={'form':form})
-    else:
-        form = Banca()
-        return render(request,template_name=templModifica,context={'form':form})
     
 def checkCarta(form,request):
     try:
@@ -193,18 +138,56 @@ def checkCarta(form,request):
     return True
 
 @login_required(login_url='utente:Login')
-def modificaCarta(request):
+def modifica(request,tipo):
+    templ = 'utente/modifica.html'
     utente = request.user
-    if request.method == 'POST':
-        form = Carta(request.POST)
-        if form.is_valid() and checkCarta(form,request):
-            form.save(utente=utente)
-            return redirect('utente:Account')
-        else:
-            return render(request,template_name=templModifica,context={'form':form})
-    else:
+    if tipo == 'informazioni':
+        form = Informazioni()
+    elif tipo == 'indirizzo-spedizione':
+        form = Spedizione()
+    elif tipo == 'indirizzo-fatturazione':
+        form = Fatturazione()
+    elif tipo == 'banca':
+        form = Banca()
+    elif tipo == 'carta':
         form = Carta()
-        return render(request,template_name=templModifica,context={'form':form})
+    if request.method == 'POST':
+        if tipo == 'informazioni':
+            form = Informazioni(request.POST)
+        elif tipo == 'indirizzo-spedizione':
+            form = Spedizione(request.POST)
+        elif tipo == 'indirizzo-fatturazione':
+            form = Fatturazione(request.POST)
+        elif tipo == 'banca':
+            form = Banca(request.POST)
+        elif tipo == 'carta':
+            form = Carta(request.POST)
+        if form.is_valid():
+            if tipo=='informazioni' and checkData(form,request):
+                form.save(utente=utente)
+                return redirect('utente:Account')
+            elif tipo == 'indirizzo-spedizione':
+                eliminaDatiEsistenti(IndirizzoSpedizione,utente)
+                form.save(utente=utente)
+                return redirect('utente:Account')
+            elif tipo == 'indirizzo-fatturazione': 
+                eliminaDatiEsistenti(IndirizzoFatturazione,utente)
+                form.save(utente=utente)
+                return redirect('utente:Account')
+            elif tipo == 'banca' and checkBanca(form,request):
+                eliminaDatiEsistenti(DatiBancari,utente)
+                form.save(utente=utente)
+                return redirect('utente:Account')
+            elif tipo == 'carta' and checkCarta(form,request):
+                eliminaDatiEsistenti(CartaCredito,utente)
+                form.save(utente=utente)
+                return redirect('utente:Account')
+            else:
+                return render(request,template_name=templ,context={'form':form})
+        else:
+            return render(request,template_name=templ,context={'form':form})
+    else:
+        return render(request,template_name=templ,context={'form':form})
 
 @login_required(login_url='utente:Login')
 def elimina(request,tipo):
@@ -217,17 +200,13 @@ def elimina(request,tipo):
         utente.save()
         
     if tipo == 'indirizzo-spedizione':
-        if IndirizzoSpedizione.objects.filter(utente=utente).exists():
-            IndirizzoSpedizione.objects.filter(utente=utente).delete()
+        eliminaDatiEsistenti(IndirizzoSpedizione,utente)
     elif tipo == 'indirizzo-fatturazione':
-        if IndirizzoFatturazione.objects.filter(utente=utente).exists():
-            IndirizzoFatturazione.objects.filter(utente=utente).delete()
+        eliminaDatiEsistenti(IndirizzoFatturazione,utente)
     elif tipo == 'banca':
-        if DatiBancari.objects.filter(utente=utente).exists():
-            DatiBancari.objects.filter(utente=utente).delete()
+        eliminaDatiEsistenti(DatiBancari,utente)
     elif tipo == 'carta':
-        if CartaCredito.objects.filter(utente=utente).exists():
-            CartaCredito.objects.filter(utente=utente).delete()
+        eliminaDatiEsistenti(CartaCredito,utente)
     elif tipo == 'account':
         utente.delete()
         return redirect('utente:Login')
@@ -280,7 +259,8 @@ def wishlist(request):
         'paginaPiu2':pagina+2,
         'paginaMeno1':pagina-1,
         'paginaMax':paginaMax,
-        'wishlist':wishlist
+        'wishlist':wishlist,
+        'url':'/utente/wishlist'
     }
 
     return render(request,template_name=templ,context=ctx)
@@ -314,20 +294,3 @@ def acquisti(request):
     }
 
     return render(request,template_name=templ,context=ctx)
-
-@login_required(login_url='utente:Login')
-def recensione(request,idModello):
-    templ = 'utente/recensione.html'
-    utente = request.user
-    prodotto = Prodotto.objects.filter(idModello=idModello).first()
-    url=request.META.get('HTTP_REFERER', '/')
-    if request.method == 'POST':
-        form = RecensioneForm(request.POST)
-        if form.is_valid():
-            
-            return redirect(url)
-        else:
-            return render(request,template_name=templ,context={'form':form})
-    else:
-        form = RecensioneForm()
-        return render(request,template_name=templ,context={'form':form})

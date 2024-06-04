@@ -5,18 +5,22 @@ from utente.models import *
 from .forms import *
 from prodotto.views import paginazione
 from utente.views import getWishlist
-from django.db.models import Count
-
+from django.db.models import Count,Avg
 
 def home(request):
+
     templ = 'home.html'
 
     topSellers = Vendita.objects.values('prodotto').annotate(nAcquisti=Count('prodotto')).order_by('-nAcquisti')[:8]
-
-    topRated = Recensione.objects.values('prodotto').annotate(nRecensioni=Count('prodotto')).order_by('-nRecensioni')[:8]
-
+    topRated = Recensione.objects.values('acquisto__prodotto').annotate(media=Avg('voto')).order_by('-media')[:8]
+    topVenduti,topVotati = [],[]
     for topSeller in topSellers:
-        topSeller['prodotto'] = Prodotto.objects.get(pk=topSeller['prodotto'])
+        topVenduti.append({'prodotto':Prodotto.objects.get(pk=topSeller['prodotto']),'nAcquisti':topSeller['nAcquisti']})
+
+    print(topRated)
+
+    for topRate in topRated:
+        topVotati.append({'prodotto':Prodotto.objects.get(pk=topRate['acquisto__prodotto']),'media':topRate['media']})
 
     wishlist = getWishlist(request).prodotti.all()
 
@@ -24,7 +28,8 @@ def home(request):
         'topSellers':topSellers,
         'form' : Cerca(),
         'wishlist':wishlist,
-        'topRated':topRated
+        'topVenduti':topVenduti,
+        'topVotati':topVotati
     }
 
     if request.method == 'POST':

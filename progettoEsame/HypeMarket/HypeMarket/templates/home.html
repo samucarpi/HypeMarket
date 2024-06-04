@@ -30,44 +30,53 @@
             <div class='col-2'></div>
             <h3> Le più acquistate </h3>
             <div class='row mt-3'>
-                {% for topSeller in topSellers %}
+                {% for topVenduto in topVenduti %}
                     <div class='col-3'>
                         {% if wishlist %}
                             {% for prodotto in wishlist %}
-                                {% if prodotto.idModello == topSeller.prodotto.idModello %}
-                                    <a class='cuore position-absolute' href='/utente/preferiti/{{topSeller.prodotto.idModello}}'> <i class="h4 bi bi-heart-fill"></i> </a>
+                                {% if prodotto.idModello == topVenduto.prodotto.idModello %}
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{topVenduto.prodotto.idModello}}'> <i class="h4 bi bi-heart-fill"></i> </a>
                                 {% else %}
-                                    <a class='cuore position-absolute' href='/utente/preferiti/{{topSeller.prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{topVenduto.prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
                                 {% endif %}
                             {% endfor %}
                         {%else%}
-                            <a class='cuore position-absolute' href='/utente/preferiti/{{topSeller.prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
+                            <a class='cuore position-absolute' href='/utente/preferiti/{{topVenduto.prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
                         {% endif %}
                         <div class='row text-center'>
-                            <a href='/sneakers/{{topSeller.prodotto.idModello}}'><img src='{{ topSeller.prodotto.immagine }}' class='imgProd'></a>
-                            <p class='titoloProd'>{{ topSeller.prodotto.titolo }}</p>
+                            <a href='/sneakers/{{topVenduto.prodotto.idModello}}'><img src='{{ topVenduto.prodotto.immagine }}' class='imgProd'></a>
+                            <p class='titoloProd'>{{ topVenduto.prodotto.titolo }}</p>
+                            <p class='titoloProd'> 
+                                ACQUISTATE {{ topVenduto.nAcquisti }}
+                                {% if topVenduto.nAcquisti == 1 %}
+                                    VOLTA
+                                {% else %}
+                                    VOLTE
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
                 {% endfor%}
             </div>
             <h3 class='mt-5'> Quelle con voti più alti </h3>
             <div class='row mt-3 mb-5'>
-                {% for prodotto in topRated %}
+                {% for topVotato in topVotati %}
                     <div class='col-3'>
                         {% if wishlist %}
                             {% for prodotto in wishlist %}
-                                {% if prodotto.idModello == prodotto.idModello %}
-                                    <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}'> <i class="h4 bi bi-heart-fill"></i> </a>
+                                {% if prodotto.idModello == topVotato.prodotto.idModello %}
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{topVotato.prodotto.idModello}}'> <i class="h4 bi bi-heart-fill"></i> </a>
                                 {% else %}
-                                    <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
+                                    <a class='cuore position-absolute' href='/utente/preferiti/{{topVotato.prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
                                 {% endif %}
                             {% endfor %}
                         {%else%}
-                            <a class='cuore position-absolute' href='/utente/preferiti/{{prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
+                            <a class='cuore position-absolute' href='/utente/preferiti/{{topVotato.prodotto.idModello}}'> <i class="h4 bi bi-heart"></i> </a>
                         {% endif %}
                         <div class='row text-center'>
-                            <a href='/sneakers/{{prodotto.idModello}}'><img src='{{ prodotto.immagine }}' class='imgProd'></a>
-                            <p class='titoloProd'>{{ prodotto.titolo }}</p>
+                            <a href='/sneakers/{{topVotato.prodotto.idModello}}'><img src='{{ topVotato.prodotto.immagine }}' class='imgProd'></a>
+                            <p class='titoloProd'>{{ topVotato.prodotto.titolo }}</p>
+                            <p class='titoloProd'>{{ topVotato.media }} <i class=" text-warning bi bi-star-fill"></i> </p>
                         </div>
                     </div>
                 {% endfor%}

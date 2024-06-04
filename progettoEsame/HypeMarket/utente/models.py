@@ -17,7 +17,7 @@ class Utente(AbstractUser):
         verbose_name_plural = 'Utenti'
 
 class Indirizzo(models.Model):
-    utente=models.ForeignKey(Utente,related_name='indirizzi', on_delete=models.CASCADE)
+    utente=models.ForeignKey(Utente,related_name='indirizzi', on_delete=models.CASCADE,null=True, blank=True)
     nome=models.CharField(max_length=25)
     cognome=models.CharField(max_length=25)
     via=models.CharField(max_length=50)
@@ -34,14 +34,14 @@ class IndirizzoFatturazione(Indirizzo):
     pass
 
 class DatiBancari(models.Model):
-    utente=models.ForeignKey(Utente,related_name='dati', on_delete=models.CASCADE)
+    utente=models.ForeignKey(Utente,related_name='dati', on_delete=models.CASCADE,null=True, blank=True)
     nome=models.CharField(max_length=25)
     cognome=models.CharField(max_length=25)
     iban=models.CharField(max_length=27)
     banca=models.CharField(max_length=50)
 
 class CartaCredito(models.Model):
-    utente=models.ForeignKey(Utente,related_name='carte', on_delete=models.CASCADE)
+    utente=models.ForeignKey(Utente,related_name='carte', on_delete=models.CASCADE,null=True, blank=True)
     nome=models.CharField(max_length=25)
     cognome=models.CharField(max_length=25)
     numero=models.CharField(max_length=16)
@@ -50,11 +50,5 @@ class CartaCredito(models.Model):
     cvv=models.CharField(max_length=3)
 
 class Wishlist(models.Model):
-    utente=models.ForeignKey(Utente,related_name='wishlist', on_delete=models.CASCADE)
+    utente=models.ForeignKey(Utente,related_name='wishlist', on_delete=models.CASCADE,null=True, blank=True)
     prodotti = models.ManyToManyField(Prodotto)
-
-class Recensione(models.Model):
-    utente=models.ForeignKey(Utente,related_name='recensioni', on_delete=models.CASCADE)
-    prodotto=models.ForeignKey(Prodotto,related_name='recensioni', on_delete=models.CASCADE)
-    testo=models.TextField()
-    voto=models.IntegerField()

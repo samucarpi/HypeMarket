@@ -12,13 +12,14 @@
     {% endif %}
 {% endblock %}
 {% block content %}
-    <div class='container'>
+{{block.super}}
+    <div class='container mt-5'>
         <div class='row'>
             <div class='col-md-3'>
             </div>
             <div class='col-md-6' id='form'>
                 <h2 class='text-center'>
-                    {% if 'login'%}
+                    {% if login %}
                         Login
                     {% else %}
                         Registrazione
@@ -60,7 +61,7 @@
                         {% endfor %}
                     {% endif %}
                 </div>
-                {% if 'login'%}
+                {% if login%}
                     <p id='domanda'> Non hai un account? <a href="{{'http://localhost:8000/utente/registrazione' }}">Registrati</a></p>
                 {% else %}
                     <p id='domanda'> Sei già registrato? <a href="{{ 'http://localhost:8000/utente/login' }}">Accedi</a></p>

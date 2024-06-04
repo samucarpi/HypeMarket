@@ -323,25 +323,26 @@ class RecensioneForm(forms.ModelForm):
         model = Recensione
         fields = ['voto','testo']
 
-    voto=forms.IntegerField(widget=forms.IntegerField(), max_length=50)
-    testo=forms.CharField(widget=forms.Textarea(), max_length=500)
-
+    voto = forms.ChoiceField(widget=forms.Select(attrs={'class': 'voto'}), choices=[(i, ('★' * i)) for i in range(1, 6)])
+    voto.label = 'Inserire un voto da 1 a 5'
+    testo=forms.CharField(widget=forms.Textarea(attrs={'class': 'testo'}), max_length=200)
+    testo.label = 'Inserire un breve commento'
+    
     def __init__(self, *args, **kwargs):
         super(RecensioneForm, self).__init__(*args, **kwargs)
         helper = FormHelper()
-        helper.form_id = 'form-recensione'
-        helper.form_method = 'POST'
+        helper.form_show_labels = False
+        helper.form_id = 'form-cerca'
         helper.layout = Layout(
             Field('voto', css_class='form-control'),
             Field('testo', css_class='form-control'),
-            Submit('submit', 'Invia', css_class='btn btn-primary'),
+            Submit('submit', 'Cerca', css_class='btn btn-primary'),
         )
 
-    def save(self, commit=True, utente=None, prodotto=None):
+    def save(self, commit=True, acquisto=None):
         recensione = super().save(commit=False)
-        if utente:
-            recensione.utente = utente
-            recensione.prodotto = prodotto
+        if acquisto:
+            recensione.acquisto = acquisto
         if commit:
             recensione.save()
         return recensione

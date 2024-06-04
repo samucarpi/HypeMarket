@@ -209,38 +209,18 @@ def acquisto(request,idModello):
         return redirect(url)
 
 @login_required(login_url='utente:Login')
-def eliminaProposta(request,idModello):
-    prodotto = Prodotto.objects.get(idModello=idModello)
-    utente = request.user
+def elimina(request,tipo,id):
     url=request.META.get('HTTP_REFERER', '/').split('?')[0]
-    taglia=checkTaglia(request,prodotto)
-    if taglia != None:
-        if Proposta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).exists():
-            Proposta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).delete()
-        return redirect(url)
-    else:
-        return redirect(url)
-
-@login_required(login_url='utente:Login')
-def eliminaOfferta(request,idModello):
-    prodotto = Prodotto.objects.get(idModello=idModello)
-    utente = request.user
-    url=request.META.get('HTTP_REFERER', '/').split('?')[0]
-    taglia=checkTaglia(request,prodotto)
-    if taglia != None:
-        if Offerta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).exists():
-            Offerta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).delete()
-        return redirect(url)
-    else:
-        return redirect(url)
+    if tipo == 'proposta':
+        proposta = Proposta.objects.filter(id=id)
+        proposta.delete()
+    elif tipo == 'offerta':
+        offerta = Offerta.objects.filter(id=id)
+        offerta.delete()
+    return redirect(url)
     
-def informazioni(request,tipo,idModello):
-    prodotto = Prodotto.objects.get(idModello=idModello)
-    utente=request.user
-    taglia = checkTaglia(request,prodotto)
+def informazioni(request,tipo,id):
     ctx={
-        'prodotto':prodotto,
-        'taglia':taglia,
         'scadenza':None,
         'indirizzo':None,
         'carta':None,
@@ -249,28 +229,65 @@ def informazioni(request,tipo,idModello):
         'offerta':None,
         'proposta':None,
         'vendita':None,
-        'acquisto':None
+        'acquisto':None,
+        'form':None
     }
     if tipo == 'offerta':
-        offerta = Offerta.objects.filter(prodotto=prodotto,utente=utente,taglia=taglia).first()
+        offerta = Offerta.objects.filter(id=id).first()
+        prodotto = offerta.prodotto
         ctx['offerta']=offerta
         ctx['carta'] = offerta.carta
         ctx['indirizzo'] = offerta.indirizzoSpedizione
     elif tipo == 'proposta':
-        proposta = Proposta.objects.filter(prodotto=prodotto,utente=utente,taglia=taglia).first()
+        proposta = Proposta.objects.filter(id=id).first()
+        prodotto = proposta.prodotto
         ctx['proposta'] = proposta
         ctx['banca'] = proposta.banca
         ctx['indirizzo'] = proposta.indirizzoFatturazione
     elif tipo == 'vendita':
-        vendita = Vendita.objects.filter(prodotto=prodotto,utente=utente,taglia=taglia).first()
-        ctx['scadenza']= vendita.data
+        vendita = Vendita.objects.filter(id=id).first()
+        prodotto = vendita.prodotto
+        ctx['scadenza']= vendita.data + timedelta(days=3)
         ctx['vendita'] = vendita
         ctx['banca'] = vendita.banca
         ctx['indirizzo'] = vendita.indirizzoFatturazione
     elif tipo == 'acquisto':
-        acquisto = Acquisto.objects.filter(prodotto=prodotto,utente=utente,taglia=taglia).first()
+        acquisto = Acquisto.objects.filter(id=id).first()
+        prodotto = acquisto.prodotto
         ctx['scadenza']= acquisto.data + timedelta(days=10)
         ctx['acquisto'] = acquisto
         ctx['carta'] = acquisto.carta
         ctx['indirizzo'] = acquisto.indirizzoSpedizione
+        ctx['form'] = RecensioneForm()
+    ctx['prodotto'] = prodotto
+    ctx['taglia'] = checkTaglia(request,prodotto)
     return render(request,template_name='gestione/gestione.html',context=ctx)
+
+@login_required(login_url='utente:Login')
+def recensione(request,id):
+    acquisto = Acquisto.objects.filter(id=id).first()
+    prodotto = acquisto.prodotto
+    taglia = acquisto.taglia
+    url=request.META.get('HTTP_REFERER', '/')
+    ctx={
+        'taglia': taglia,
+        'prodotto':prodotto,
+        'recensione':True,
+        'recensioneExists':None,
+    }
+    if Recensione.objects.filter(acquisto=acquisto).exists():
+        ctx['recensioneExists']=Recensione.objects.filter(acquisto=acquisto).first()
+        return render(request,template_name='gestione/gestione.html',context=ctx)
+    
+    if request.method == 'POST':
+        form = RecensioneForm(request.POST)
+        ctx['form']=form
+        if form.is_valid():
+            form.save(acquisto=acquisto)
+            return redirect(url)
+        else:
+            return render(request,template_name='gestione/gestione.html',context=ctx)
+    else:
+        form = RecensioneForm()
+        ctx['form']=form
+        return render(request,template_name='gestione/gestione.html',context=ctx)
