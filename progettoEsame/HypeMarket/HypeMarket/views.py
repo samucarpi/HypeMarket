@@ -21,8 +21,10 @@ def home(request):
 
     for topRate in topRated:
         topVotati.append({'prodotto':Prodotto.objects.get(pk=topRate['acquisto__prodotto']),'media':topRate['media']})
-
-    wishlist = getWishlist(request).prodotti.all()
+    try:
+        wishlist = getWishlist(request).prodotti.all()
+    except:
+        wishlist = None
 
     ctx ={
         'topSellers':topSellers,

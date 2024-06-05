@@ -10,11 +10,8 @@ class Utente(AbstractUser):
     email=models.CharField(max_length=50,unique=True)
     password=models.CharField(max_length=50)
     dataNascita=models.DateField(null=True, blank=True)
+    immagineProfilo=models.FileField(blank=True, null=True)
     pIva=models.CharField(max_length=11,null=True, blank=True)
-
-    class Meta: 
-        verbose_name = 'Utente'
-        verbose_name_plural = 'Utenti'
 
 class Indirizzo(models.Model):
     utente=models.ForeignKey(Utente,related_name='indirizzi', on_delete=models.CASCADE,null=True, blank=True)
@@ -30,8 +27,14 @@ class Indirizzo(models.Model):
 class IndirizzoSpedizione(Indirizzo):
     pass
 
+    class Meta:
+        verbose_name_plural='Indirizzi di spedizione'
+
 class IndirizzoFatturazione(Indirizzo):
     pass
+
+    class Meta:
+        verbose_name_plural='Indirizzi di fatturazione'
 
 class DatiBancari(models.Model):
     utente=models.ForeignKey(Utente,related_name='dati', on_delete=models.CASCADE,null=True, blank=True)
@@ -39,6 +42,9 @@ class DatiBancari(models.Model):
     cognome=models.CharField(max_length=25)
     iban=models.CharField(max_length=27)
     banca=models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name_plural='Dati bancari'
 
 class CartaCredito(models.Model):
     utente=models.ForeignKey(Utente,related_name='carte', on_delete=models.CASCADE,null=True, blank=True)
@@ -48,6 +54,9 @@ class CartaCredito(models.Model):
     scadenzaMese=models.CharField(max_length=2)
     scadenzaAnno=models.CharField(max_length=4)
     cvv=models.CharField(max_length=3)
+
+    class Meta:
+        verbose_name_plural='Carte di credito'
 
 class Wishlist(models.Model):
     utente=models.ForeignKey(Utente,related_name='wishlist', on_delete=models.CASCADE,null=True, blank=True)

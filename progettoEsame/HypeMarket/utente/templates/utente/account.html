@@ -30,37 +30,42 @@
                 </div>
 
                 <div class='row'>
-                    <div class='col-4'>
-                        <p class='campo'>Username</p>
-                        {{ utente.username }}
-                    </div> 
-                    <div class='col-4'>
-                        <p class='campo'>Nome</p>
-                        {{ utente.nome }}
-                    </div> 
-                    <div class='col-4'>
-                        <p class='campo'>Cognome</p>
-                        {{ utente.cognome }}
+                    <div class='col-4 text-center immagine'>
+                        <div class='box'>
+                            {% if immagineProfilo %}
+                                <img src='.{{immagineProfilo.url}}' class='img-fluid immagineProfilo'>
+                            {% else %}
+                                <img src='{% static "/img/defaultPic.png" %}' class='img-fluid immagineProfilo'>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class='col-4'>
-                        <p class='campo'>Email</p>
-                        {{ utente.email }}
-                    </div>
-                    <div class='col-4'>
-                        <p class='campo'>Data di nascita</p>
-                        {% if  utente.dataNascita %}
-                            {{ utente.dataNascita }}
-                        {%else%}
-                            **/**/****
-                        {% endif %}
-                    </div>
-                    <div class='col-4'>
-                        <p class='campo'> Numero iva</p>
-                        {% if  utente.pIva %}
-                            {{ utente.pIva }}
-                        {%else%}
-                            **********
-                        {% endif %}
+                    <div class='col-8'>
+                        <div class='row'>
+                            <div class='col-6'>
+                                <p class='campo'>Username</p>
+                                {{ utente.username }}
+                                <p class='campo'>Nome</p>
+                                {{ utente.nome }}
+                                <p class='campo'>Data di nascita</p>
+                                {% if  utente.dataNascita %}
+                                    {{ utente.dataNascita }}
+                                {%else%}
+                                    **/**/****
+                                {% endif %}
+                            </div>
+                            <div class='col-6'>
+                                <p class='campo'>Email</p>
+                                {{ utente.email }}
+                                <p class='campo'>Cognome</p>
+                                {{ utente.cognome }}
+                                <p class='campo'> Numero iva</p>
+                                {% if  utente.pIva %}
+                                    {{ utente.pIva }}
+                                {%else%}
+                                    **********
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

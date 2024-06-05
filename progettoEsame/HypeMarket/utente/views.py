@@ -70,12 +70,18 @@ def account(request):
         banca= DatiBancari.objects.filter(utente=utente).first()
     if CartaCredito.objects.filter(utente=utente).exists():
         carta=CartaCredito.objects.filter(utente=utente).first()
+    if utente.immagineProfilo:
+        immagineProfilo = utente.immagineProfilo
+    else:
+        immagineProfilo = None
+    
     ctx = {
         'utente':utente,
         'indirizzoSpedizione':indirizzoSpedizione,
         'indirizzoFatturazione':indirizzoFatturazione,
         'banca':banca,
-        'carta':carta
+        'carta':carta,
+        'immagineProfilo':immagineProfilo
     }
     return render(request,template_name=templ,context=ctx)
 
@@ -153,7 +159,7 @@ def modifica(request,tipo):
         form = Carta()
     if request.method == 'POST':
         if tipo == 'informazioni':
-            form = Informazioni(request.POST)
+            form = Informazioni(request.POST,request.FILES)
         elif tipo == 'indirizzo-spedizione':
             form = Spedizione(request.POST)
         elif tipo == 'indirizzo-fatturazione':

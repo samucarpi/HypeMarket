@@ -5,9 +5,17 @@ class Prodotto(models.Model):
     immagine=models.CharField(max_length=200)
     idModello=models.CharField(max_length=10)
     dataRilascio=models.DateField()
+    
+    class Meta:
+        verbose_name_plural='Prodotti'
+        ordering=['-dataRilascio']
 
 class Taglia(models.Model):
     prodotto=models.ForeignKey(Prodotto,related_name='taglie', on_delete=models.CASCADE)
     taglia=models.CharField(max_length=5)
     propostaMinore=models.ForeignKey('gestione.Proposta',related_name='taglie', on_delete=models.SET_NULL,blank=True,null=True)
     offertaMaggiore=models.ForeignKey('gestione.Offerta',related_name='taglie', on_delete=models.SET_NULL,blank=True,null=True)
+
+    class Meta:
+        verbose_name_plural='Taglie'
+    

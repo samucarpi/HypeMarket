@@ -41,12 +41,11 @@ def catalogo(request):
     wishlist = getWishlist(request)
     try:
         wishlistProd = wishlist.prodotti.all()
+        wishlistOut = Prodotto.objects.exclude(id__in=wishlistProd.values('id'))
+        prodotti = list(wishlistProd)+list(wishlistOut)
     except:
-        wishlistProd = None
-
-    wishlistOut = Prodotto.objects.exclude(id__in=wishlistProd.values('id'))
-
-    prodotti = list(wishlistProd)+list(wishlistOut)
+        prodotti = Prodotto.objects.all()
+        wishlist = None
     
     url = '/sneakers/catalogo'
 

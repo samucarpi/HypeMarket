@@ -5,6 +5,8 @@ from gestione.models import *
 from crispy_forms.helper import FormHelper 
 from crispy_forms.layout import Submit, Field, Layout
 from datetime import datetime as time
+import os
+from django.conf import settings
 
 class Registrazione(forms.ModelForm):
     class Meta:
@@ -63,10 +65,13 @@ class Login(forms.Form):
 class Informazioni(forms.ModelForm):
     class Meta:
         model = Utente
-        fields = ['dataNascita','pIva']
+        fields = ['immagineProfilo','dataNascita','pIva']
 
     dataNascita=forms.DateField(widget=forms.DateInput(attrs={'type':'date'}), required=False)
+    dataNascita.label = 'Data di nascita'
     pIva=forms.CharField(widget=forms.TextInput(), max_length=11, required=False)
+    immagineProfilo = forms.FileField(widget=forms.FileInput(attrs={'accept': 'image/*'}), required=False)
+    immagineProfilo.label = 'Immagine del profilo'
 
     def __init__(self, *args, **kwargs):
         super(Informazioni, self).__init__(*args, **kwargs)
@@ -74,6 +79,7 @@ class Informazioni(forms.ModelForm):
         helper.form_id = 'form-informazioni'
         helper.form_method = 'POST'
         helper.layout = Layout(
+            Field('immagineProfilo', css_class='form-control'),
             Field('dataNascita', css_class='form-control'),
             Field('pIva', css_class='form-control'),
             Submit('submit', 'Modifica', css_class='btn btn-primary'),
@@ -82,6 +88,19 @@ class Informazioni(forms.ModelForm):
     def save(self, commit=True, utente=None):
         informazioni = super().save(commit=False)
         if utente:
+            immagine = informazioni.immagineProfilo
+            if immagine and utente.immagineProfilo:
+                if os.path.exists(utente.immagineProfilo.path):
+                    os.remove(utente.immagineProfilo.path)
+            if immagine:
+                destinazione = os.path.join(settings.MEDIA_ROOT,'immaginiProfilo', utente.username)
+                os.makedirs(destinazione, exist_ok=True)
+                nome = immagine.name
+                path = os.path.join(destinazione, nome)
+                with open(path, 'wb+') as f:
+                    for chunk in immagine.chunks():
+                        f.write(chunk)
+                utente.immagineProfilo = os.path.join('immaginiProfilo', utente.username, nome)
             utente.dataNascita = informazioni.dataNascita
             utente.pIva = informazioni.pIva
         if commit:

@@ -14,7 +14,7 @@
             <div class='col-md-6' id='form'>
                 <div class='row'>
                         <h2 class='text-center'>Modifica</h2>
-                    <form method='POST'>{% csrf_token %}
+                    <form method='POST' enctype="multipart/form-data">{% csrf_token %}
                         {{form|crispy}}
                         <div class='row mx-auto text-center'>
                             <div class='col-12'>
