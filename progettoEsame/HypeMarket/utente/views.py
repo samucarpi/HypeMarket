@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from HypeMarket.forms import *
 from datetime import datetime as time
+from prodotto.views import paginazione,getWishlist
 
 def checkPassword(form,request):
     if form.cleaned_data['password'] != form.cleaned_data['confermaPassword']:
@@ -218,13 +219,6 @@ def elimina(request,tipo):
         return redirect('utente:Login')
     return redirect('utente:Account')
 
-def getWishlist(request):
-    utente = request.user
-    wishlist = None
-    if utente.is_authenticated:
-        wishlist = Wishlist.objects.filter(utente=utente).first()
-    return wishlist
-
 @login_required(login_url='utente:Login')
 def aggiungiPreferiti(request,idModello):
     url=request.META.get('HTTP_REFERER', '/').split('?')[0]
@@ -248,26 +242,12 @@ def aggiungiPreferiti(request,idModello):
 @login_required(login_url='utente:Login')
 def wishlist(request):
     templ = 'utente/wishlist.html'
-    wishlist = getWishlist(request)
-    try:
-        pagina=int(request.GET.get('p'))
-    except:
-        pagina=1
-    paginaMax=int(len(wishlist.prodotti.all())/24+1)
-    selezioneInizo=(pagina-1)*24
-    selezioneFine=pagina*24
-    wishlist=wishlist.prodotti.all()[selezioneInizo:selezioneFine]
-    
-    ctx = {
-        'title':'Wishlist',
-        'pagina':pagina,
-        'paginaPiu1':pagina+1,
-        'paginaPiu2':pagina+2,
-        'paginaMeno1':pagina-1,
-        'paginaMax':paginaMax,
-        'wishlist':wishlist,
-        'url':'/utente/wishlist'
-    }
+
+    prodotti = getWishlist(request).prodotti.all()
+
+    url='/utente/wishlist'
+
+    ctx = paginazione(request,prodotti,url)
 
     return render(request,template_name=templ,context=ctx)
 

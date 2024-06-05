@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
-from .init_db import *
+from .initProdotti import *
 from .views import *
 
 
@@ -10,9 +10,7 @@ urlpatterns = [
     path('utente/', include('utente.urls')),
     path('sneakers/', include('prodotto.urls')),
     path('gestione/', include('gestione.urls')),
-    re_path(r'.*$', home, name='Home'),
+    re_path(r'home', home, name='Home'),
 ]
- 
-#erase_db()
-#init_db()
-#Recensione.objects.all().delete()
+
+initProdotti()

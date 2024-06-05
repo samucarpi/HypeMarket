@@ -18,17 +18,9 @@ p{
 }
 
 .immagineProfilo {
-    width: 100px;
+    width: 10rem;
+    height: 10rem;
     border: 1px solid #090909;
     border-radius: 50%;
     object-fit: cover;
-}
-
-.immagine{
-    display: table;
-}
-
-.box{
-    vertical-align: middle;
-    display: table-cell;
 }

@@ -1,7 +1,3 @@
-body {
-    overflow-x:hidden;
-}
-
 #acquista, #offri, #proponi,#vendi{
     padding: 10px;
 }
@@ -20,16 +16,9 @@ body {
     border: 1px solid #f8f9fa;
 }
 
-.container{
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-}
-
 .propostaMinore{
     font-weight: 500;
     color: rgb(115, 220, 83);
-    
 }
 
 .offertaMaggiore{

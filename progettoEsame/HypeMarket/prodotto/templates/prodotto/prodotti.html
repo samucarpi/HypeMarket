@@ -2,14 +2,15 @@
 
 {% block head %}
     {% load static %}
-    <link rel='stylesheet' href="{% static '/css/catalogo.css' %}">
 {% endblock %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}
+    Catalogo
+{% endblock %}
 
 {% block content %}
-{{block.super}}
-    <div id='catalogo' class='container mt-4'>
+    {{block.super}}
+    <div class='container mt-4'>
         <div class='row'>
             <div class='col-12'>
                 <div class='row'>

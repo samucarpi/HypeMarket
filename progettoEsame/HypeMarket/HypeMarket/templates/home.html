@@ -3,10 +3,11 @@
 {% block head %}
     {% load crispy_forms_tags %}
     {% load static %}
-    <link rel='stylesheet' href="{% static '/css/home.css' %}">
 {% endblock %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}
+    Home
+{% endblock %}
 
 {% block content %}
 {{block.super}}

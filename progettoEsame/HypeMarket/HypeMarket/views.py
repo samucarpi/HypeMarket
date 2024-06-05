@@ -8,42 +8,36 @@ from utente.views import getWishlist
 from django.db.models import Count,Avg
 
 def home(request):
-
     templ = 'home.html'
 
-    topSellers = Vendita.objects.values('prodotto').annotate(nAcquisti=Count('prodotto')).order_by('-nAcquisti')[:8]
+    topSellers = Acquisto.objects.values('prodotto').annotate(nAcquisti=Count('prodotto')).order_by('-nAcquisti')[:8]
     topRated = Recensione.objects.values('acquisto__prodotto').annotate(media=Avg('voto')).order_by('-media')[:8]
     topVenduti,topVotati = [],[]
     for topSeller in topSellers:
         topVenduti.append({'prodotto':Prodotto.objects.get(pk=topSeller['prodotto']),'nAcquisti':topSeller['nAcquisti']})
-
-    print(topRated)
-
     for topRate in topRated:
         topVotati.append({'prodotto':Prodotto.objects.get(pk=topRate['acquisto__prodotto']),'media':topRate['media']})
-    try:
-        wishlist = getWishlist(request).prodotti.all()
-    except:
-        wishlist = None
+
+    wishlist = getWishlist(request).prodotti.all()
+
+    form = Cerca()
 
     ctx ={
-        'topSellers':topSellers,
-        'form' : Cerca(),
+        'form' : form,
         'wishlist':wishlist,
         'topVenduti':topVenduti,
         'topVotati':topVotati
     }
 
     if request.method == 'POST':
-        ctx['form'] = Cerca(request.POST)
         form = Cerca(request.POST)
+        ctx['form'] = form
         if form.is_valid() and form.cleaned_data['stringa'] != '':
             stringa = form.cleaned_data['stringa']
             return redirect('/ricerca/'+stringa)
         else:
             return render(request,template_name=templ,context=ctx)
     else:
-        form = Cerca()
         return render(request,template_name=templ,context=ctx)
 
 def ricerca(request,stringa):

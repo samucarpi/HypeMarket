@@ -1,9 +1,6 @@
 #id_prezzo,#message{
     width: 35%;
     margin: auto;
-}
-
-#message{
     margin-bottom: 15px;
 }
 
@@ -16,11 +13,4 @@
     margin: auto;
     width: 50%;
     resize: none;
-}
-
-.commento{
-    word-wrap: break-word;
-    text-align:left;
-    width:50%;
-    margin:auto;
 }

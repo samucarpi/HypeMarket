@@ -8,18 +8,23 @@
 {% block title %}{{ prodotto.titolo }}{% endblock %}
 
 {% block content %}
-{{block.super}}
-    <div class='container d-flex align-items-center' style='min-height: 90vh;'>
+    {{block.super}}
+    <div class='container mt-5'>
         <div class='row'>
             <div class='col-lg-6 v-100'>
                 <div class='row '>
                     <div class='col-12'>
                         <button type='button' class='btn btn-dark' onclick="window.location.href='/sneakers/catalogo'"><i class='bi bi-arrow-left'></i> Indietro</button>
                     </div>
-                    <div class='col-12 text-left flex-grow-1' style='white-space: nowrap;'>
+                    <div class='col-12 text-left' style='white-space: nowrap;'>
                         <br>
                         <h3>
-                            {{ prodotto.titolo }} &nbsp;&nbsp;
+                            {{ prodotto.titolo }} 
+                            &nbsp;
+                            {% if recensioni %}
+                                {{ mediaRecensioni }} <i class=" text-warning bi bi-star-fill"> </i>
+                            {% endif %}
+                            &nbsp;&nbsp; 
                             {% if wishlist %}
                                 {% for prod in wishlist%}
                                     {% if prod.idModello == prodotto.idModello %}
@@ -36,85 +41,110 @@
                     <div class='col-12 text-center flex-grow-1'>
                         <img style='width:115%;'src='{{ prodotto.immagine }}'>
                     </div>
-                    <div class='infos col-12 text-left'>
-                        <h4> Dettagli del prodotto: </h4>
+                    <div class='col-12 text-left'>
+                        <h4> Dettagli </h4>
                         <br>
                         <p> <b>Modello:</b> {{ prodotto.idModello }} </p>
                         <p> <b>Data di uscita:</b> {{ prodotto.dataRilascio }} </p>
+                        {% if recensioni %}
+                            <div class='row mb-4'>
+                                <div class='col-10' style='max-height: 250px; overflow-y: auto;'>
+                                    <hr>
+                                    {% for recensione in recensioni %}
+                                        <div class='row'>
+                                            <div class='col-12'>
+                                                <p><b> {{ recensione.acquisto.utente }}</b> &nbsp;
+                                                {% for number in ''|ljust:recensione.voto %}
+                                                    <i class=" text-warning bi bi-star-fill"></i>
+                                                {% endfor %}
+                                                </p>
+                                                <p style='word-wrap: break-word;margin:0px;width:100%;'>{{ recensione.testo }}</p>
+                                                <cite style='font-size:0.7rem;'>Acquistato il {{ recensione.acquisto.data }}</cite>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                    {% endfor % %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <h4> Nessuna recensione </h4>
+                        {% endif %}
                     </div>
                 </div>
             </div>
             <div class='col-lg-1'>
             </div>
-            <div class='info col-lg-5'>
-                <div class='row'>
-                    <div class='col-1'></div>
-                    <div class='col-10'>
-                        <div class='row contenitore'>
-                            <div class='col-6'>
-                                <button type='button' id='offri' class='btn btn-dark w-100 disabled'>Offri</button>
-                            </div>
-                            <div class='col-6'>
-                                <button type='button' id='proponi' class='btn btn-dark w-100 disabled'>Proponi</button>
-                            </div>
-                            <div class='row mt-3'>
-                                <div class='col-4'>
-                                    <button type='button' id='offerte' class='btn btn-dark w-100 disabled'>Offerte</button>
-                                </div>
-                                <div class='col-4'>
-                                    <button type='button' id='proposte' class='btn btn-dark w-100 disabled'>Proposte</button>
-                                </div>
-                                <div class='col-4'>
-                                    <button type='button' id='vendite' class='btn btn-dark w-100 disabled'>Vendite</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='col-1'></div>
-                </div>
-                <br>
-                <div class='contenitore'>
-                    <div class=' row'>
-                        <div class='col-12 text-center'>
-                            <h5>Taglie disponibili:</h5></div>
-                        </diV>
-                        <div class='row justify-content-center' style='white-space: nowrap;'>
-                            {% for taglia in taglie %}
-                                <input type='checkbox' class='btn-check' id='{{taglia.taglia}}' autocomplete='off'>
-                                <label class=' col-2 m-1 btn btn-outline-dark' for='{{taglia.taglia}}'>
-                                    <div class='row'>
-                                        <div class='col-12'>
-                                            {{ taglia.taglia }}
-                                        </div>
-                                        <div class='col-12'>
-                                            {% if taglia.propostaMinore != None %}
-                                                <div class='propostaMinore'>{{ taglia.propostaMinore.prezzo }} €</div>
-                                            {% else %}
-                                            <div class='propostaMinore'> --- </div>
-                                            {% endif %}
-                                        </div>
-                                        <div class='col-12'>
-                                            {% if taglia.offertaMaggiore != None %}
-                                                <p class='offertaMaggiore'>{{ taglia.offertaMaggiore.prezzo }} €</p>
-                                            {% else %}
-                                            <div class='offertaMaggiore'> --- </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </label>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <br>
+            <div class='col-lg-5 ' style='display: table;'>
+                <div style='vertical-align: middle;display: table-cell;'>
                     <div class='row'>
-                        <div class='col-6 text-center'>
-                            <button type='button' id='vendi' class='btn btn-danger w-100 disabled'>Vendi ora</button>
+                        <div class='col-1'></div>
+                        <div class='col-10'>
+                            <div class='row contenitore'>
+                                <div class='col-6'>
+                                    <button type='button' id='offri' class='btn btn-dark w-100 disabled'>Offri</button>
+                                </div>
+                                <div class='col-6'>
+                                    <button type='button' id='proponi' class='btn btn-dark w-100 disabled'>Proponi</button>
+                                </div>
+                                <div class='row mt-3'>
+                                    <div class='col-4'>
+                                        <button type='button' id='offerte' class='btn btn-dark w-100 disabled'>Offerte</button>
+                                    </div>
+                                    <div class='col-4'>
+                                        <button type='button' id='proposte' class='btn btn-dark w-100 disabled'>Proposte</button>
+                                    </div>
+                                    <div class='col-4'>
+                                        <button type='button' id='vendite' class='btn btn-dark w-100 disabled'>Vendite</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class='col-6 text-center'>
-                            <button type='button' id='acquista' class='btn btn-success w-100 disabled'>Acquista ora</button>
-                        </div>
+                        <div class='col-1'></div>
                     </div>
                     <br>
+                    <div class='contenitore'>
+                        <div class=' row'>
+                            <div class='col-12 text-center'>
+                                <h5>Taglie disponibili:</h5></div>
+                            </diV>
+                            <div class='row justify-content-center' style='white-space: nowrap;'>
+                                {% for taglia in taglie %}
+                                    <input type='checkbox' class='btn-check' id='{{taglia.taglia}}' autocomplete='off'>
+                                    <label class=' col-2 m-1 btn btn-outline-dark' for='{{taglia.taglia}}'>
+                                        <div class='row'>
+                                            <div class='col-12'>
+                                                {{ taglia.taglia }}
+                                            </div>
+                                            <div class='col-12'>
+                                                {% if taglia.propostaMinore != None %}
+                                                    <div class='propostaMinore'>{{ taglia.propostaMinore.prezzo }} €</div>
+                                                {% else %}
+                                                <div class='propostaMinore'> --- </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class='col-12'>
+                                                {% if taglia.offertaMaggiore != None %}
+                                                    <p class='offertaMaggiore'>{{ taglia.offertaMaggiore.prezzo }} €</p>
+                                                {% else %}
+                                                <div class='offertaMaggiore'> --- </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <br>
+                        <div class='row'>
+                            <div class='col-6 text-center'>
+                                <button type='button' id='vendi' class='btn btn-danger w-100 disabled'>Vendi ora</button>
+                            </div>
+                            <div class='col-6 text-center'>
+                                <button type='button' id='acquista' class='btn btn-success w-100 disabled'>Acquista ora</button>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
                 </div>
             </div>
         </div>
@@ -151,165 +181,163 @@
             {% endif %}
         {% endfor %}
     {% endif %}
-
 {% endblock %}
 {% block script%}
-<script>
-    $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
 
-        $('input[type="checkbox"]').on('change', function() {
-            $('input[type="checkbox"]').not(this).prop('checked', false);
-            if ($(this).is(':checked')) {
-                $('#vendi,#acquista,#proponi,#offri,#offerte,#proposte,#vendite').removeClass('disabled');
-            } else {
-                $('#vendi,#acquista,#proponi,#offri,#offerte,#proposte,#vendite').addClass('disabled');
-            }
-        });
-
-        function view(view, successo, errore){
-            view = JSON.parse(view);
-            if (view.length > 0) {
-                let html = '';
-                for (var i=0;i<view.length;i++){
-                    html += `<p><b>Data:</b> ${view[i].data}, <b>Prezzo:</b> ${view[i].prezzo}<p><hr>`;
+            $('input[type="checkbox"]').on('change', function() {
+                $('input[type="checkbox"]').not(this).prop('checked', false);
+                if ($(this).is(':checked')) {
+                    $('#vendi,#acquista,#proponi,#offri,#offerte,#proposte,#vendite').removeClass('disabled');
+                } else {
+                    $('#vendi,#acquista,#proponi,#offri,#offerte,#proposte,#vendite').addClass('disabled');
                 }
-                Swal.fire({
-                    icon: 'info',
-                    title: successo,
-                    html: '<hr>'+html
-                });
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Attenzione',
-                    text: errore,
-                });
-            }
-        }
+            });
 
-        var viewOfferte = $('#viewOfferte').text();
-        var viewProposte = $('#viewProposte').text();
-        var viewVendite = $('#viewVendite').text();
-        if(viewOfferte != ''){
-            view(viewOfferte,'Offerte per questa taglia','Non ci sono offerte per questa taglia');
-        }else if(viewProposte != ''){
-            view(viewProposte,'Proposte per questa taglia','Non ci sono proposte per questa taglia');
-        }else if(viewVendite != ''){
-            view(viewVendite,'Vendite per questa taglia','Non ci sono vendite per questa taglia');
-        }
-
-        function checkEta(){
-            if('{{ eta }}' == 'None'){
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Attenzione',
-                    text: 'Non puoi eseguire azioni se non hai inserito la tua data di nascita',
-                });
-                return false;
-            }else if('{{ eta }}' < 18){
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Attenzione',
-                    text: 'Non puoi eseguire azioni se sei minorenne',
-                });
-                return false;
-            }
-            return true;
-        }
-
-        function datiMancanti(oggetto,stringa){
-            if (oggetto.text() != ''){
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Attenzione',
-                    text: stringa,
-                });
-            }
-            return true;
-        }
-
-        datiMancanti( $('#spedizione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di spedizione');
-        datiMancanti( $('#carta'),'Prima di eseguire l\'azione, inserire i dati della carta di credito');
-        datiMancanti( $('#fatturazione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di fatturazione');
-        datiMancanti( $('#banca'),'Prima di eseguire l\'azione, inserire i dati del conto bancario');
-        datiMancanti( $('#corrispondenteAcquisto'),'Impossibile acquistare il prodotto, la proposta più bassa è la tua');
-        datiMancanti( $('#corrispondenteVendita'),'Impossibile vendere il prodotto, l\'offerta più alta è la tua');
-        
-        $('#offri').on('click', function() {
-            if(checkEta()){
-                var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
-                var prodotto = '{{ prodotto.idModello}}'
-                if (taglia) {
-                    window.location.href = '/gestione/offerta/'+prodotto+'?taglia=' + taglia;
-                }
-            }
-        });
-    
-    
-        $('#proponi').on('click', function() {
-            if(checkEta()){
-                var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
-                var prodotto = '{{ prodotto.idModello}}'
-                if (taglia) {
-                    window.location.href = '/gestione/proposta/'+prodotto+'?taglia=' + taglia;
-                }
-            }
-        });
-    
-        $('#vendi').on('click', function() {
-            if(checkEta()){
-                var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
-                var prodotto = '{{ prodotto.idModello}}'
-                var offerta = $('input[type="checkbox"]:checked').next().children().children().last().text().trim();
-                if (taglia && (offerta != '---')) {
-                    window.location.href = '/gestione/vendita/'+prodotto+'?taglia=' + taglia;
-                }else
-                {
+            function view(view, successo, errore){
+                view = JSON.parse(view);
+                if (view.length > 0) {
+                    let html = '';
+                    for (var i=0;i<view.length;i++){
+                        html += `<p><b>Data:</b> ${view[i].data}, <b>Prezzo:</b> ${view[i].prezzo} €<p><hr>`;
+                    }
+                    Swal.fire({
+                        icon: 'info',
+                        title: successo,
+                        html: '<hr>'+html
+                    });
+                } else {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Attenzione',
-                        text: 'Non ci sono offerte valide per questa taglia',
+                        text: errore,
                     });
                 }
             }
-        });
 
-        $('#acquista').on('click', function() {
-            if(checkEta()){
-                var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
-                var prodotto = '{{ prodotto.idModello}}'
-                var proposta = $('input[type="checkbox"]:checked').next().children().children().first().next().text().trim();
-                if (taglia && (proposta != '---')) {
-                    window.location.href = '/gestione/acquisto/'+prodotto+'?taglia=' + taglia;
-                }else
-                {
+            var viewOfferte = $('#viewOfferte').text();
+            var viewProposte = $('#viewProposte').text();
+            var viewVendite = $('#viewVendite').text();
+            if(viewOfferte != ''){
+                view(viewOfferte,'Offerte per questa taglia','Non ci sono offerte per questa taglia');
+            }else if(viewProposte != ''){
+                view(viewProposte,'Proposte per questa taglia','Non ci sono proposte per questa taglia');
+            }else if(viewVendite != ''){
+                view(viewVendite,'Vendite per questa taglia','Non ci sono vendite per questa taglia');
+            }
+
+            function isMaggiorenne(){
+                if('{{ eta }}' == 'None'){
                     Swal.fire({
                         icon: 'warning',
                         title: 'Attenzione',
-                        text: 'Non ci sono proposte valide per questa taglia',
+                        text: 'Non puoi eseguire azioni se non hai inserito la tua data di nascita',
+                    });
+                    return false;
+                }else if('{{ eta }}' < 18){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Attenzione',
+                        text: 'Non puoi eseguire azioni se sei minorenne',
+                    });
+                    return false;
+                }
+                return true;
+            }
+
+            function datiMancanti(oggetto,stringa){
+                if (oggetto.text() != ''){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Attenzione',
+                        text: stringa,
                     });
                 }
             }
-        });
 
-        $('#offerte').on('click', function() {
-            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
-            var prodotto = '{{ prodotto.idModello}}'
-            window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewOfferte';
-        });
-
-        $('#proposte').on('click', function() {
-            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
-            var prodotto = '{{ prodotto.idModello}}'
-            window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewProposte';
-        });
-
-        $('#vendite').on('click', function() {
-            var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
-            var prodotto = '{{ prodotto.idModello}}'
-            window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewVendite';
-        });
-    });
+            datiMancanti( $('#spedizione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di spedizione');
+            datiMancanti( $('#carta'),'Prima di eseguire l\'azione, inserire i dati della carta di credito');
+            datiMancanti( $('#fatturazione'),'Prima di eseguire l\'azione, inserire l\'indirizzo di fatturazione');
+            datiMancanti( $('#banca'),'Prima di eseguire l\'azione, inserire i dati del conto bancario');
+            datiMancanti( $('#corrispondenteAcquisto'),'Impossibile acquistare il prodotto, la proposta più bassa è la tua');
+            datiMancanti( $('#corrispondenteVendita'),'Impossibile vendere il prodotto, l\'offerta più alta è la tua');
+            
+            $('#offri').on('click', function() {
+                if(isMaggiorenne()){
+                    var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+                    var prodotto = '{{ prodotto.idModello}}'
+                    if (taglia) {
+                        window.location.href = '/gestione/offerta/'+prodotto+'?taglia=' + taglia;
+                    }
+                }
+            });
         
-</script>
+        
+            $('#proponi').on('click', function() {
+                if(isMaggiorenne()){
+                    var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+                    var prodotto = '{{ prodotto.idModello}}'
+                    if (taglia) {
+                        window.location.href = '/gestione/proposta/'+prodotto+'?taglia=' + taglia;
+                    }
+                }
+            });
+        
+            $('#vendi').on('click', function() {
+                if(isMaggiorenne()){
+                    var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+                    var prodotto = '{{ prodotto.idModello}}'
+                    var offerta = $('input[type="checkbox"]:checked').next().children().children().last().text().trim();
+                    if (taglia && (offerta != '---')) {
+                        window.location.href = '/gestione/vendita/'+prodotto+'?taglia=' + taglia;
+                    }else
+                    {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Attenzione',
+                            text: 'Non ci sono offerte valide per questa taglia',
+                        });
+                    }
+                }
+            });
+
+            $('#acquista').on('click', function() {
+                if(isMaggiorenne()){
+                    var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+                    var prodotto = '{{ prodotto.idModello}}'
+                    var proposta = $('input[type="checkbox"]:checked').next().children().children().first().next().text().trim();
+                    if (taglia && (proposta != '---')) {
+                        window.location.href = '/gestione/acquisto/'+prodotto+'?taglia=' + taglia;
+                    }else
+                    {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Attenzione',
+                            text: 'Non ci sono proposte valide per questa taglia',
+                        });
+                    }
+                }
+            });
+
+            $('#offerte').on('click', function() {
+                var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+                var prodotto = '{{ prodotto.idModello}}'
+                window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewOfferte';
+            });
+
+            $('#proposte').on('click', function() {
+                var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+                var prodotto = '{{ prodotto.idModello}}'
+                window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewProposte';
+            });
+
+            $('#vendite').on('click', function() {
+                var taglia = $('input[type="checkbox"]:checked').attr('id').trim();
+                var prodotto = '{{ prodotto.idModello}}'
+                window.location.href = '/sneakers/'+prodotto+'?taglia=' + taglia+'&viewVendite';
+            });
+        });
+            
+    </script>
 {%endblock%}

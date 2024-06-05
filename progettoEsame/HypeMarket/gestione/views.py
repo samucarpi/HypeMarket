@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -221,11 +220,11 @@ def elimina(request,tipo,id):
     
 def informazioni(request,tipo,id):
     ctx={
+        'informazioni':True,
         'scadenza':None,
         'indirizzo':None,
         'carta':None,
         'banca':None,
-        'informazioni':True,
         'offerta':None,
         'proposta':None,
         'vendita':None,
@@ -269,7 +268,10 @@ def recensione(request,id):
     prodotto = acquisto.prodotto
     taglia = acquisto.taglia
     url=request.META.get('HTTP_REFERER', '/')
+    
+    form = RecensioneForm()
     ctx={
+        'form':form,
         'taglia': taglia,
         'prodotto':prodotto,
         'recensione':True,
@@ -288,6 +290,4 @@ def recensione(request,id):
         else:
             return render(request,template_name='gestione/gestione.html',context=ctx)
     else:
-        form = RecensioneForm()
-        ctx['form']=form
         return render(request,template_name='gestione/gestione.html',context=ctx)

@@ -26,6 +26,6 @@ class Vendita(CompraVendita):
     banca=models.ForeignKey(DatiBancari,related_name='vendite', on_delete=models.PROTECT)
 
 class Recensione(models.Model):
-    acquisto=models.ForeignKey(Acquisto,related_name='recensioni', on_delete=models.PROTECT)
+    acquisto=models.ForeignKey(Acquisto,related_name='recensioni', on_delete=models.CASCADE)
     voto=models.IntegerField()  
     testo=models.TextField()

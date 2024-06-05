@@ -2,26 +2,32 @@ from django.shortcuts import render
 from .models import *
 from utente.models import *
 from HypeMarket.forms import *
-from utente.views import getWishlist
+from django.db.models import Avg
 
-def paginazione(request, prodotti, url, titolo):
-    paginaMax = int(len(prodotti) / 24 + 1)
+def getWishlist(request):
+    utente = request.user
+    wishlist = None
+    if utente.is_authenticated:
+        wishlist = Wishlist.objects.filter(utente=utente).first()
+    return wishlist
+
+def paginazione(request, prodotti, url):
+    paginaMax = int(len(prodotti)/24+1)
     try:
         pagina = int(request.GET.get('p'))
     except:
         pagina = 1
     if pagina > paginaMax:
-        pagina = paginaMax
-    selezioneInizo = (pagina - 1) * 24
-    selezioneFine = pagina * 24
-    wishlist = getWishlist(request)
+        pagina=paginaMax
+    selezioneInizo = (pagina-1)*24
+    selezioneFine = pagina*24
+
     try:
         wishlist=getWishlist(request).prodotti.all()
     except:
         wishlist=None
     
     ctx = {
-        'title': titolo,
         'prodotti': prodotti[selezioneInizo:selezioneFine], 
         'pagina': pagina,
         'paginaPiu1': pagina + 1,
@@ -49,9 +55,15 @@ def catalogo(request):
     
     url = '/sneakers/catalogo'
 
-    ctx = paginazione(request, prodotti, url, 'Catalogo')
+    ctx = paginazione(request, prodotti, url)
 
     return render(request,template_name=templ,context=ctx)
+
+def checkTaglia(request,prodotto):
+    for t in Taglia.objects.filter(prodotto=prodotto):
+        if t.taglia == request.GET.get('taglia'):
+            return t
+    return None
 
 def prodotto(request,idModello):
     templ = 'prodotto/prodotto.html'
@@ -61,23 +73,18 @@ def prodotto(request,idModello):
     for taglia in Taglia.objects.filter(prodotto=prodotto):
         taglia.propostaMinore = None
         taglia.offertaMaggiore = None
-        
         if Proposta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').exists():
             proposta = Proposta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').first()
             taglia.propostaMinore = proposta
         if Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').exists():
             offerta = Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').last()
             taglia.offertaMaggiore = offerta
-
         Taglia.save(taglia)
 
     utente = request.user
     eta=None
 
-    try:
-        wishlist=getWishlist(request).prodotti.all()
-    except:
-        wishlist=None
+    wishlist=getWishlist(request).prodotti.all()
 
     if utente.is_authenticated:
         if utente.dataNascita is not None:
@@ -102,6 +109,9 @@ def prodotto(request,idModello):
             vendite = Vendita.objects.filter(prodotto=prodotto,taglia=taglia).all()
             for vendita in vendite:
                 viewVendite.append({'data': vendita.data.strftime('%d/%m/%Y'), 'prezzo': vendita.prezzo})
+
+    recensioni = Recensione.objects.filter(acquisto__prodotto=prodotto).all()
+    mediaRecensioni = Recensione.objects.filter(acquisto__prodotto=prodotto).aggregate(Avg('voto'))['voto__avg']
     ctx = { 
         'eta': eta,
         'prodotto':prodotto,
@@ -112,12 +122,8 @@ def prodotto(request,idModello):
         'off':off,
         'prop':prop,
         'vend':vend,
-        'wishlist':wishlist
+        'wishlist':wishlist,
+        'recensioni':recensioni,
+        'mediaRecensioni':mediaRecensioni,
     }
     return render(request,template_name=templ,context=ctx)
-
-def checkTaglia(request,prodotto):
-    for t in Taglia.objects.filter(prodotto=prodotto):
-        if t.taglia == request.GET.get('taglia'):
-            return t
-    return None
