@@ -65,11 +65,7 @@ def checkTaglia(request,prodotto):
             return t
     return None
 
-def prodotto(request,idModello):
-    templ = 'prodotto/prodotto.html'
-
-    prodotto=Prodotto.objects.get(idModello=idModello)
-
+def aggiornaPrezzi(prodotto,taglia):
     for taglia in Taglia.objects.filter(prodotto=prodotto):
         taglia.propostaMinore = None
         taglia.offertaMaggiore = None
@@ -79,18 +75,25 @@ def prodotto(request,idModello):
         if Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').exists():
             offerta = Offerta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').last()
             taglia.offertaMaggiore = offerta
-        Taglia.save(taglia)
+        taglia.save()
+
+def prodotto(request,idModello):
+    templ = 'prodotto/prodotto.html'
+
+    prodotto=Prodotto.objects.get(idModello=idModello)
 
     utente = request.user
     eta=None
 
     wishlist=getWishlist(request).prodotti.all()
-
+    
     if utente.is_authenticated:
         if utente.dataNascita is not None:
             eta=time.now().date().year-utente.dataNascita.year
 
     taglia=checkTaglia(request,prodotto)
+    aggiornaPrezzi(prodotto,taglia)
+
     viewOfferte,viewProposte,viewVendite=[],[],[]
     off,prop,vend=False,False,False
     if request.GET.get('taglia') != None: 

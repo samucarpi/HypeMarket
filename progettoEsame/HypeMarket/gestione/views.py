@@ -46,6 +46,7 @@ def offerta(request,idModello):
                         if Offerta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).exists():
                             Offerta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).delete()
                         form.save(utente=utente,prodotto=prodotto,taglia=taglia,indirizzoSpedizione=indirizzo,carta=carta)
+                        messages.success(request,'Offerta inserita con successo')
                         return redirect(url)
                     else:
                         return render(request,template_name=templ,context=ctx)
@@ -87,6 +88,7 @@ def proposta(request,idModello):
                         if Proposta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).exists():
                             Proposta.objects.filter(utente=utente,prodotto=prodotto,taglia=taglia).delete()
                         form.save(utente=utente,prodotto=prodotto,taglia=taglia,indirizzoFatturazione=indirizzo,banca=banca)
+                        messages.success(request,'Proposta inserita con successo')
                         return redirect(url)
                     else:
                         return render(request,template_name=templ,context=ctx)
@@ -140,6 +142,7 @@ def vendita(request,idModello):
                         acquisto = Acquisto(utente=acquirente,prodotto=prodotto,taglia=taglia,prezzo=prezzo,indirizzoSpedizione=indirizzoSpedizione,carta=carta,data=data)
                         offertaRiferimento.delete()
                         acquisto.save()
+                        messages.success(request,'Vendita effettuata con successo')
                         return redirect(url)
                     else:
                         return render(request,template_name=templ,context=ctx)
@@ -193,6 +196,7 @@ def acquisto(request,idModello):
                         acquisto = Vendita(utente=venditore,prodotto=prodotto,taglia=taglia,prezzo=prezzo,indirizzoFatturazione=indirizzoFatturazione,banca=banca,data=data)
                         Proposta.objects.filter(prodotto=prodotto,taglia=taglia).order_by('prezzo').first().delete()
                         acquisto.save()
+                        messages.success(request,'Acquisto effettuato con successo')
                         return redirect(url)
                     else:
                         return render(request,template_name=templ,context=ctx)

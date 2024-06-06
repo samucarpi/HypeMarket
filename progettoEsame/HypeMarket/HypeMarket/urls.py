@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
-from .initProdotti import *
+from .scrape.initProdotti import initProdotti
 from .views import *
 
 
