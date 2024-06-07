@@ -1,12 +1,22 @@
-In questo repo potete trovare il materiale utilizzato a lezione per il corso di Tecnologie Web.
-
-In particolare, questo git verrà costantemente aggiornato e conterrà slides e codice così come si vedono a lezione.
-
-La struttura del repo:
-
-cartella "python": contiene degli esempi e degli esercizi in python.  
-cartella "django": contiene i progetti django, relativi DB, Pipfiles generati da pipenv visti a lezione  
-cartella "js": contiene i files html/js/css con gli esempi della lezione su JavaScript e tecn. client side    
-cartella "slides": contiene i pdf delle slides utilizzate per le lezioni. 
 
 
+# HypeMarket README.md
+## Software utilizzati in questo progetto
+
+- **Django** (web framework) (https://docs.djangoproject.com/en/5.0/)
+- **Visual Studio Code** (editor di codice) (https://code.visualstudio.com/docs)
+- **Google Chrome** (browser) (https://developer.chrome.com/docs?hl=it)
+
+## Librerie utilizzate
+
+- **JQuery** (https://api.jquery.com/)
+- **Bootstrap 5.3** (https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+- **SweetAlert** (https://sweetalert2.github.io/#usage)
+- **Crispy forms** (https://django-crispy-forms.readthedocs.io/en/latest/install.html)
+- **Django countries** (https://pypi.org/project/django-countries/)
+- **Datetime** (https://docs.python.org/3/library/datetime.html)
+- **Requests** (https://requests.readthedocs.io/en/latest/)
+- **Beautiful Soup** (https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
+- **Json** (https://docs.python.org/3/library/json.html)
+- **Os** (https://docs.python.org/3/library/os.html)
+- **Urllib.parse** (https://docs.python.org/3/library/urllib.parse.html)

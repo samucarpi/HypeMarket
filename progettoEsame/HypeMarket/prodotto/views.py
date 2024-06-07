@@ -11,7 +11,7 @@ def getWishlist(request):
         wishlist = Wishlist.objects.filter(utente=utente).first()
     return wishlist
 
-def paginazione(request, prodotti, url):
+def paginazione(request, prodotti, url,titolo):
     paginaMax = int(len(prodotti)/24+1)
     try:
         pagina = int(request.GET.get('p'))
@@ -28,6 +28,7 @@ def paginazione(request, prodotti, url):
         wishlist=None
     
     ctx = {
+        'titolo': titolo,
         'prodotti': prodotti[selezioneInizo:selezioneFine], 
         'pagina': pagina,
         'paginaPiu1': pagina + 1,
@@ -55,7 +56,7 @@ def catalogo(request):
     
     url = '/sneakers/catalogo'
 
-    ctx = paginazione(request, prodotti, url)
+    ctx = paginazione(request, prodotti, url, 'Catalogo')
 
     return render(request,template_name=templ,context=ctx)
 
@@ -79,13 +80,18 @@ def aggiornaPrezzi(prodotto,taglia):
 
 def prodotto(request,idModello):
     templ = 'prodotto/prodotto.html'
+    
+    url=request.META.get('HTTP_REFERER', '/').split('?')[0]
 
     prodotto=Prodotto.objects.get(idModello=idModello)
 
     utente = request.user
     eta=None
 
-    wishlist=getWishlist(request).prodotti.all()
+    try:
+        wishlist=getWishlist(request).prodotti.all()
+    except:
+        wishlist=None
     
     if utente.is_authenticated:
         if utente.dataNascita is not None:
@@ -128,5 +134,6 @@ def prodotto(request,idModello):
         'wishlist':wishlist,
         'recensioni':recensioni,
         'mediaRecensioni':mediaRecensioni,
+        'url':url
     }
     return render(request,template_name=templ,context=ctx)

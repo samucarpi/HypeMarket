@@ -12,15 +12,17 @@ def checkPassword(form,request):
         return False
     return True
 
+def checkDati(form,request):
+    if any(char.isdigit() for char in form.cleaned_data['nome']) or any(char.isdigit() for char in form.cleaned_data['cognome']):
+        messages.error(request,'Nome e cognome non possono contenere numeri')
+        return False
+    return True
 def registrazioneForm(request):
     templ='utente/registrazioneLogin.html'
     if request.method == 'POST':
         form = Registrazione(request.POST)
-        if form.is_valid() and checkPassword(form,request):
+        if form.is_valid() and checkDati(form,request) and checkPassword(form,request):
             form.save()
-            wishlist = Wishlist()
-            wishlist.utente = Utente.objects.get(username=form.cleaned_data['username'])
-            wishlist.save()
             messages.success(request, 'Sei stato registrato con successo!')
             return redirect('utente:Login')
         else:
@@ -112,7 +114,26 @@ def eliminaDatiEsistenti(tipo,utente):
         except:
             tipo.objects.filter(utente=utente).update(utente=None)
 
+def checkIndirizzo(form,request):
+    if not checkDati(form,request):
+        return False
+    if len(form.cleaned_data['cap']) != 5:
+        messages.error(request,'CAP non valido')
+        return False
+    if len(form.cleaned_data['citta']) < 3 or any(char.isdigit() for char in form.cleaned_data['citta']):
+        messages.error(request,'Città non valida')
+        return False
+    if len(form.cleaned_data['provincia']) != 2:
+        messages.error(request,'Provincia non valida')
+        return False
+    if len(form.cleaned_data['telefono']) < 9:
+        messages.error(request,'Numero di telefono non valido')
+        return False
+    return True
+
 def checkBanca(form,request):
+    if not checkDati(form,request):
+        return False
     if len(form.cleaned_data['iban']) != 27:
         messages.error(request,'IBAN non valido')
         return False
@@ -126,6 +147,8 @@ def checkCarta(form,request):
         int(form.cleaned_data['cvv'])
     except ValueError:
         messages.error(request,'Inserire solo numeri')
+        return False
+    if not checkDati(form,request):
         return False
     if len(form.cleaned_data['numero']) != 16:
         messages.error(request,'Numero carta non valido')
@@ -173,11 +196,11 @@ def modifica(request,tipo):
             if tipo=='informazioni' and checkData(form,request):
                 form.save(utente=utente)
                 return redirect('utente:Account')
-            elif tipo == 'indirizzo-spedizione':
+            elif tipo == 'indirizzo-spedizione' and checkIndirizzo(form,request):
                 eliminaDatiEsistenti(IndirizzoSpedizione,utente)
                 form.save(utente=utente)
                 return redirect('utente:Account')
-            elif tipo == 'indirizzo-fatturazione': 
+            elif tipo == 'indirizzo-fatturazione' and checkIndirizzo(form,request): 
                 eliminaDatiEsistenti(IndirizzoFatturazione,utente)
                 form.save(utente=utente)
                 return redirect('utente:Account')
@@ -247,7 +270,7 @@ def wishlist(request):
 
     url='/utente/wishlist'
 
-    ctx = paginazione(request,prodotti,url)
+    ctx = paginazione(request,prodotti,url,'Wishlist')
 
     return render(request,template_name=templ,context=ctx)
 

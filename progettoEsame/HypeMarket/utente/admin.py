@@ -25,3 +25,4 @@ class UtenteAdmin(admin.ModelAdmin):
     inlines = [IndirizzoSpedizioneAdmin, IndirizzoFatturazioneAdmin, DatiBancariAdmin, CartaCreditoAdmin]
 
 admin.site.register(Utente, UtenteAdmin)
+admin.site.unregister(Group)

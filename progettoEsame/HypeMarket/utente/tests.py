@@ -49,7 +49,7 @@ class WishlistTestCase(TestCase):
         self.utente = Utente.objects.create_user(username='utenteTest', email='utente@utente.test', nome='utente', cognome='test', password='12345')
         self.prodotto1 = Prodotto.objects.create(idModello='HQ1234', immagine='test1.png',titolo='Scarpe Adidas', dataRilascio='2021-04-24')
         self.prodotto2 = Prodotto.objects.create(idModello='HQ1235', immagine='test2.png',titolo='Scarpe Nike', dataRilascio='2021-04-25')
-        self.wishlist = Wishlist.objects.create(utente=self.utente)
+        self.wishlist = Wishlist.objects.get(utente=self.utente)
         self.wishlist.prodotti.add(self.prodotto1, self.prodotto2)
 
     #test per la visualizzazione della wishlist

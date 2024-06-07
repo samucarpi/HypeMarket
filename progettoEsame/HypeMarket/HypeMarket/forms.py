@@ -70,6 +70,7 @@ class Informazioni(forms.ModelForm):
     dataNascita=forms.DateField(widget=forms.DateInput(attrs={'type':'date'}), required=False)
     dataNascita.label = 'Data di nascita'
     pIva=forms.CharField(widget=forms.TextInput(), max_length=11, required=False)
+    pIva.label = 'Numero partita IVA'
     immagineProfilo = forms.FileField(widget=forms.FileInput(attrs={'accept': 'image/*'}), required=False)
     immagineProfilo.label = 'Immagine del profilo'
 
@@ -101,8 +102,10 @@ class Informazioni(forms.ModelForm):
                     for chunk in immagine.chunks():
                         f.write(chunk)
                 utente.immagineProfilo = os.path.join('immaginiProfilo', utente.username, nome)
-            utente.dataNascita = informazioni.dataNascita
-            utente.pIva = informazioni.pIva
+            if informazioni.dataNascita:
+                utente.dataNascita = informazioni.dataNascita
+            if informazioni.pIva:
+                utente.pIva = informazioni.pIva
         if commit:
             utente.save()
         return utente
@@ -344,7 +347,7 @@ class RecensioneForm(forms.ModelForm):
 
     voto = forms.ChoiceField(widget=forms.Select(attrs={'class': 'voto'}), choices=[(i, ('★' * i)) for i in range(1, 6)])
     voto.label = 'Inserire un voto da 1 a 5'
-    testo=forms.CharField(widget=forms.Textarea(attrs={'class': 'testo'}), max_length=200)
+    testo=forms.CharField(widget=forms.Textarea(attrs={'class': 'testo'}), max_length=400)
     testo.label = 'Inserire un breve commento'
     
     def __init__(self, *args, **kwargs):

@@ -13,4 +13,4 @@ urlpatterns = [
     re_path(r'home', home, name='Home'),
 ]
 
-initProdotti()
+#initProdotti()

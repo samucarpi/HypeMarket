@@ -6,7 +6,7 @@ jsonList=[]
 
 with open('db_test.json', 'w', encoding='utf-8') as f:
     page=1
-    for i in range(0,134):
+    for i in range(0,10): #scrapo le prime 10 pagine del sito
         base_url=requests.get('https://hypeboost.com/it/categoria/sneakers?p='+str(page))
         print(page)
         soup = BeautifulSoup(base_url.content, 'html.parser')

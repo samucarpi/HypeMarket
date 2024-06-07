@@ -6,6 +6,7 @@ from .forms import *
 from prodotto.views import paginazione
 from utente.views import getWishlist
 from django.db.models import Count,Avg
+import urllib.parse
 
 def home(request):
     templ = 'home.html'
@@ -18,7 +19,10 @@ def home(request):
     for topRate in topRated:
         topVotati.append({'prodotto':Prodotto.objects.get(pk=topRate['acquisto__prodotto']),'media':topRate['media']})
 
-    wishlist = getWishlist(request).prodotti.all()
+    try:
+        wishlist=getWishlist(request).prodotti.all()
+    except:
+        wishlist=None
 
     form = Cerca()
 
@@ -45,5 +49,6 @@ def ricerca(request,stringa):
     prodotti=Prodotto.objects.filter(titolo__icontains=stringa).all()
     url='/ricerca/'+stringa
     ctx=paginazione(request, prodotti, url, 'Ricerca')
+    ctx['ricerca']=urllib.parse.unquote(stringa)
 
     return render(request,template_name=templ,context=ctx)

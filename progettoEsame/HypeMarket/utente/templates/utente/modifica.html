@@ -4,7 +4,7 @@
     {% load static %}
     <link rel='stylesheet' href="{% static '/css/form.css' %}">
 {% endblock %}
-{% block title %}Login{% endblock %}
+{% block title %}Modifica{% endblock %}
 {% block content %}
 
     <div class='container'>
@@ -23,7 +23,7 @@
                             </div>
                         </div>
                     </form>
-                    <div id='messaggi'>
+                    <div id='messaggi' class='mt-4'>
                         {% if messages %}
                             {% for message in messages %}
                                 {% if message.tags == 'success' %}

@@ -12,6 +12,11 @@
     {{block.super}}
     <div class='container mt-4'>
         <div class='row'>
+            {% if ricerca %}
+                <div class='col-12 mb-3'>
+                    <h2 class='text-center'>Risultati ricerca: {{ricerca}}</h2>
+                </div>
+            {% endif %}
             <div class='col-12'>
                 <div class='row'>
                     {% if prodotti %}
