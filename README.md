@@ -5,7 +5,6 @@
 
 - **Django** (web framework) (https://docs.djangoproject.com/en/5.0/)
 - **Visual Studio Code** (editor di codice) (https://code.visualstudio.com/docs)
-- **Google Chrome** (browser) (https://developer.chrome.com/docs?hl=it)
 
 ## Librerie utilizzate
 
